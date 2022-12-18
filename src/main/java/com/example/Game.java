@@ -6,10 +6,12 @@ import javafx.stage.Stage;
 
 public class Game extends Application {
 
+
+
   @Override
   public void start(Stage stage) throws Exception {
-    Gboard gboard=new Gboard(8);
-    Scene scene=new Scene(gboard.gridPane);
+    Board board = new Board();
+    Scene scene = new Scene(board.getContent());
     stage.setScene(scene);
     stage.setTitle("");
     stage.setResizable(false);
