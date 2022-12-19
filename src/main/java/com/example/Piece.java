@@ -8,13 +8,13 @@ import static  com.example.Board.TILE_SIZE;
 public class Piece extends StackPane {
 
     private PieceType type;
-
+    private boolean queen;
     private double mouseX, mouseY;
     private double oldX, oldY;
 
-    public Piece(PieceType type, int x, int y){
+    public Piece(PieceType type, int x, int y) {
         this.type = type;
-
+        queen=false;
         move(x, y);
 
         Ellipse bg = new Ellipse(TILE_SIZE * 0.3125, TILE_SIZE * 0.26);
@@ -23,8 +23,8 @@ public class Piece extends StackPane {
         bg.setStroke(Color.BLACK);
         bg.setStrokeWidth(TILE_SIZE * 0.03);
 
-        bg.setTranslateX((TILE_SIZE - TILE_SIZE * 0.3125 * 2)/2);
-        bg.setTranslateY((TILE_SIZE - TILE_SIZE * 0.26 * 2)/2 + TILE_SIZE * 0.07);
+        bg.setTranslateX((TILE_SIZE - TILE_SIZE * 0.3125 * 2) / 2);
+        bg.setTranslateY((TILE_SIZE - TILE_SIZE * 0.26 * 2) / 2 + TILE_SIZE * 0.07);
 
         Ellipse ellipse = new Ellipse(TILE_SIZE * 0.3125, TILE_SIZE * 0.26);
         ellipse.setFill(type == PieceType.RED ? Color.valueOf("#c40003") : Color.valueOf("fff9f4"));
@@ -36,30 +36,48 @@ public class Piece extends StackPane {
         ellipse.setTranslateY((TILE_SIZE - TILE_SIZE * 0.26 * 2) / 2);
 
         getChildren().addAll(bg, ellipse);
-        setOnMousePressed(e->{
+        setOnMousePressed(e -> {
             mouseX = e.getSceneX();
             mouseY = e.getSceneY();
         });
-        setOnMouseDragged(e->{
+        setOnMouseDragged(e -> {
             relocate(e.getSceneX() - mouseX + oldX, e.getSceneY() - mouseY + oldY);
         });
     }
 
-    public void move(int x, int y){
+    public void move(int x, int y) {
         oldX = x * TILE_SIZE;
         oldY = y * TILE_SIZE;
         relocate(oldX, oldY);
     }
-    public PieceType getType(){
+
+    public PieceType getType() {
         return this.type;
     }
-    public double getOldX(){
+
+    public double getOldX() {
         return oldX;
     }
-    public double getOldY(){
+
+    public double getOldY() {
         return oldY;
     }
-    public void abortMove(){
+
+    public void abortMove() {
         relocate(oldX, oldY);
+    }
+
+    public void change() {
+        this.queen = true;
+        Ellipse ellipse = new Ellipse(TILE_SIZE * 0.20, TILE_SIZE * 0.1664);
+        ellipse.setTranslateX((TILE_SIZE - TILE_SIZE * 0.3125 * 2) / 2);
+        ellipse.setTranslateY((TILE_SIZE - TILE_SIZE * 0.3125 * 2) / 2);
+        ellipse.setFill(Color.BLACK);
+        getChildren().addAll(ellipse);
+
+    }
+
+    public boolean isQueen() {
+        return queen;
     }
 }
