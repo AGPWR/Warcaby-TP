@@ -133,13 +133,13 @@ public class Board {
 
 
   private Boolean canQueenMove(int x, int y, int newX, int newY) {
-    if (isInCross(x, y, newX, newY)&&countPiecesInDiagonal(x,y,newX,newY)==0)
+    if (!isInPlus(x, y, newX, newY)&&countPiecesInDiagonal(x,y,newX,newY)==0)
       return true;
     else
       return false;
   }
   private Boolean canQueenKill(int x,int y, int newX,int newY){
-    if(isInCross(x, y, newX, newY)&& countPiecesInDiagonal(x,y,newX,newY)==1){
+    if(!isInPlus(x, y, newX, newY)&& countPiecesInDiagonal(x,y,newX,newY)==1){
       return true;
     }
     else
@@ -147,10 +147,8 @@ public class Board {
   }
 
 
-  private Boolean isInCross(int x0,int y0,int x1,int y1) {
-    if (Math.abs(x0 - y0) == Math.abs(x1 - y1))
-      return true;
-    if (x0 + y0 == x1 + y1)
+  private Boolean isInPlus(int x0,int y0,int x1,int y1) {
+    if (x0 == x1 || y0==y1)
       return true;
     else
       return false;
