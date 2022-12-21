@@ -68,7 +68,7 @@ public class Board {
           piece.move(newX, newY);
           board[x0][y0].setPiece(null);
           board[newX][newY].setPiece(piece);
-          if (newY == 0 || newY == 7) {
+          if ((newY == 0 || newY == 7)) {
             piece.change();
           }
 
@@ -77,7 +77,7 @@ public class Board {
           piece.move(newX, newY);
           board[x0][y0].setPiece(null);
           board[newX][newY].setPiece(piece);
-          if (newY == 0 || newY == 7) {
+          if ((newY == 0 && piece.getType() == PieceType.WHITE) || (newY == 7 && piece.getType() == PieceType.RED)) {
             piece.change();
           }
           Piece otherPiece = result.getPiece();
@@ -117,8 +117,8 @@ public class Board {
       if (canQueenMove(x0, y0, newX, newY)) {
         return new MoveResult(MoveType.NORMAL);
       }
-      if (canQueenKill(x0,y0,newX,newY)) {
-          int[] x = findPiece(x0,y0,newX,newY);
+      if (canQueenKill(x0, y0, newX, newY)) {
+        int[] x = findPiece(x0, y0, newX, newY);
         if (board[x[0]][x[1]].getPiece().getType() != piece.getType()) {
           return new MoveResult(MoveType.KILL, board[x[0]][x[1]].getPiece());
         }
@@ -133,25 +133,22 @@ public class Board {
 
 
   private Boolean canQueenMove(int x, int y, int newX, int newY) {
-    if (!isInPlus(x, y, newX, newY)&&countPiecesInDiagonal(x,y,newX,newY)==0)
-      return true;
-    else
-      return false;
+    return !isInPlus(x, y, newX, newY) && isInCross(x, y, newX, newY) && countPiecesInDiagonal(x, y, newX, newY) == 0;
   }
-  private Boolean canQueenKill(int x,int y, int newX,int newY){
-    if(!isInPlus(x, y, newX, newY)&& countPiecesInDiagonal(x,y,newX,newY)==1){
-      return true;
-    }
-    else
-    return false;
+
+  private Boolean canQueenKill(int x, int y, int newX, int newY) {
+    return !isInPlus(x, y, newX, newY) && countPiecesInDiagonal(x, y, newX, newY) == 1;
   }
 
 
-  private Boolean isInPlus(int x0,int y0,int x1,int y1) {
-    if (x0 == x1 || y0==y1)
+  private Boolean isInPlus(int x0, int y0, int x1, int y1) {
+    return x0 == x1 || y0 == y1;
+  }
+
+  private Boolean isInCross(int x0, int y0, int x1, int y1) {
+    if (Math.abs(x0 - y0) == Math.abs(x1 - y1))
       return true;
-    else
-      return false;
+    return x0 + y0 == x1 + y1;
   }
 
   public int[] findPiece(int x0, int y0, int x1, int y1) {
@@ -198,7 +195,7 @@ public class Board {
         y += yStep;
       }
     }
-    System.out.println(count);
+
     return count;
   }
 
