@@ -99,6 +99,8 @@ public class Board {
 
 
   private MoveResult tryMove(Piece piece, int newX, int newY) {
+    if(newX<0 || newX>=HEIGHT ||newY<0 || newY>=HEIGHT)
+      return new MoveResult(MoveType.NONE);
     if (board[newX][newY].hasPiece() || (newX + newY) % 2 == 0 || turn!=piece.getType()) {
       return new MoveResult(MoveType.NONE);
     }
@@ -114,7 +116,7 @@ public class Board {
         int x1 = x0 + (newX - x0) / 2;
         int y1 = y0 + (newY - y0) / 2;
 
-        if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()){ //&& isThisLongestKill(newX,newY,x0,y0,piece)) {
+        if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()){
           return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
         }
 
@@ -122,7 +124,7 @@ public class Board {
     } else {
 
 
-      if (canQueenMove(x0, y0, newX, newY)) {
+      if (canQueenMove(x0, y0, newX, newY) && !isForcedKill(piece.getType())) {
         return new MoveResult(MoveType.NORMAL);
       }
       if (canQueenKill(x0, y0, newX, newY)) {
@@ -248,8 +250,48 @@ public class Board {
         }
       }
     else{
-      //Trzeba zrobic dla damy
-      return false;
+      int xClone=x;
+      int yClone=y;
+      int[] p;
+      boolean result;
+      while(xClone >= 0 && yClone < HEIGHT && xClone<WIDTH && yClone>=0){
+          result=canQueenKill(x,y,xClone,yClone);
+           p=findPiece(x,y,xClone,yClone);
+          if(result && board[p[0]][p[1]].getPiece().getType()!=piece.getType())
+            return true;
+          xClone=xClone-2;
+          yClone=yClone+2;
+      }
+      xClone=x;
+      yClone=y;
+      while(xClone >= 0 && yClone < HEIGHT && xClone<WIDTH && yClone>=0){
+        result=canQueenKill(x,y,xClone,yClone);
+        p=findPiece(x,y,xClone,yClone);
+        if(result && board[p[0]][p[1]].getPiece().getType()!=piece.getType())
+          return true;
+        xClone=xClone-2;
+        yClone=yClone-2;
+      }
+      xClone=x;
+      yClone=y;
+      while(xClone >= 0 && yClone < HEIGHT && xClone<WIDTH && yClone>=0){
+        result=canQueenKill(x,y,xClone,yClone);
+        p=findPiece(x,y,xClone,yClone);
+        if(result && board[p[0]][p[1]].getPiece().getType()!=piece.getType())
+          return true;
+        xClone=xClone+2;
+        yClone=yClone+2;
+      }
+      xClone=x;
+      yClone=y;
+      while(xClone >= 0 && yClone < HEIGHT && xClone<WIDTH && yClone>=0){
+        result=canQueenKill(x,y,xClone,yClone);
+        p=findPiece(x,y,xClone,yClone);
+        if(result&& board[p[0]][p[1]].getPiece().getType()!=piece.getType())
+          return true;
+        xClone=xClone+2;
+        yClone=yClone-2;
+      }
     }
     return false;
   }
