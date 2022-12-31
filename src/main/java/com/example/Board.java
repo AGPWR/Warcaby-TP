@@ -32,7 +32,6 @@ public class Board {
       for (int x = 0; x < WIDTH; x++) {
         Tile tile = new Tile((x + y) % 2 == 0, x, y);
         board[x][y] = tile;
-
         tileGroup.getChildren().add(tile);
 
         Piece piece = null;
@@ -85,7 +84,7 @@ public class Board {
           Piece otherPiece = result.getPiece();
           board[toBoard(otherPiece.getOldX())][toBoard(otherPiece.getOldY())].setPiece(null);
           pieceGroup.getChildren().remove(otherPiece);
-          if(!canPieceKill(newX,newY,piece)){
+          if(!canPieceKill(newX,newY,piece,board)){
             if ((newY == 0 && piece.getType() == PieceType.WHITE) || (newY == 7 && piece.getType() == PieceType.RED)) {
               piece.change();
             }
@@ -125,15 +124,13 @@ public class Board {
       }
     } else {
 
-
       if (canQueenMove(x0, y0, newX, newY) && !isForcedKill(piece.getType())) {
         return new MoveResult(MoveType.NORMAL);
       }
-      if (canQueenKill(x0, y0, newX, newY)) {
-        int[] x = findPiece(x0, y0, newX, newY);
-        if (board[x[0]][x[1]].getPiece().getType() != piece.getType()) {
-          return new MoveResult(MoveType.KILL, board[x[0]][x[1]].getPiece());
-        }
+      if (canQueenKill(x0, y0, newX, newY,board)) {
+        int[] x = findPiece(x0, y0, newX, newY,board);
+        if( isThisLongestKill(x0,y0,newX,newY))
+            return new MoveResult(MoveType.KILL, board[x[0]][x[1]].getPiece());
       }
     }
 
@@ -145,11 +142,17 @@ public class Board {
 
 
   private Boolean canQueenMove(int x, int y, int newX, int newY) {
-    return !isInPlus(x, y, newX, newY) && isInCross(x, y, newX, newY) && countPiecesInDiagonal(x, y, newX, newY) == 0 && !board[newX][newY].hasPiece();
+    return !isInPlus(x, y, newX, newY) && isInCross(x, y, newX, newY) && countPiecesInDiagonal(x, y, newX, newY,board) == 0 && !board[newX][newY].hasPiece();
   }
 
-  private Boolean canQueenKill(int x, int y, int newX, int newY) {
-    return !isInPlus(x, y, newX, newY) && isInCross(x, y, newX, newY)&& countPiecesInDiagonal(x, y, newX, newY) == 1 && !board[newX][newY].hasPiece();
+  private Boolean canQueenKill(int x, int y, int newX, int newY,Tile[][] board) {
+    Piece piece=board[x][y].getPiece();
+    if(!isInPlus(x, y, newX, newY) && isInCross(x, y, newX, newY)&& countPiecesInDiagonal(x, y, newX, newY,board) == 1 && !board[newX][newY].hasPiece()) {
+      int[] p=findPiece(x,y,newX,newY,board);
+      if(piece.getType() !=board[p[0]][p[1]].getPiece().getType())
+        return true;
+    }
+    return false;
   }
 
 
@@ -163,7 +166,7 @@ public class Board {
     return x0 + y0 == x1 + y1;
   }
 
-  private int[] findPiece(int x0, int y0, int x1, int y1) {
+  private int[] findPiece(int x0, int y0, int x1, int y1,Tile[][] board) {
     int[] coordinates = new int[2];
 
     if (Math.abs(x0 - x1) == Math.abs(y0 - y1)) {
@@ -187,8 +190,7 @@ public class Board {
     return coordinates;
   }
 
-
-  private int countPiecesInDiagonal(int x0, int y0, int x1, int y1) {
+  private int countPiecesInDiagonal(int x0, int y0, int x1, int y1,Tile[][] board) {
     int count = 0;
 
     if (Math.abs(x0 - x1) == Math.abs(y0 - y1)) {
@@ -215,7 +217,7 @@ public class Board {
     for (int y = 0; y < HEIGHT; y++) {
       for (int x = 0; x < WIDTH; x++) {
         if(board[x][y].hasPiece() && board[x][y].getPiece().getType()==player){
-          if(canPieceKill(x,y,board[x][y].getPiece()))
+          if(canPieceKill(x,y,board[x][y].getPiece(),board))
             return true;
         }
       }
@@ -223,7 +225,7 @@ public class Board {
     return false;
   }
 
-  private boolean canPieceKill(int x, int y,Piece piece){
+  private boolean canPieceKill(int x, int y,Piece piece,Tile[][] board){
     PieceType type=piece.getType();
     if(!piece.isQueen()){
         if (x - 2 >= 0 && y + 2 < HEIGHT && x-2<WIDTH && y+2>=0) {
@@ -254,40 +256,35 @@ public class Board {
     else{
       int xClone=x;
       int yClone=y;
-      int[] p;
       while(xClone >= 0 && yClone < HEIGHT && xClone<WIDTH && yClone>=0){
-           p=findPiece(x,y,xClone,yClone);
-          if(canQueenKill(x,y,xClone,yClone) && board[p[0]][p[1]].getPiece().getType()!=piece.getType())
+          if(canQueenKill(x,y,xClone,yClone,board))
             return true;
-          xClone=xClone-2;
-          yClone=yClone+2;
+          xClone=xClone-1;
+          yClone=yClone+1;
       }
       xClone=x;
       yClone=y;
       while(xClone >= 0 && yClone < HEIGHT && xClone<WIDTH && yClone>=0){
-        p=findPiece(x,y,xClone,yClone);
-        if(canQueenKill(x,y,xClone,yClone) && board[p[0]][p[1]].getPiece().getType()!=piece.getType())
+        if(canQueenKill(x,y,xClone,yClone,board))
           return true;
-        xClone=xClone-2;
-        yClone=yClone-2;
+        xClone=xClone-1;
+        yClone=yClone-1;
       }
       xClone=x;
       yClone=y;
       while(xClone >= 0 && yClone < HEIGHT && xClone<WIDTH && yClone>=0){
-        p=findPiece(x,y,xClone,yClone);
-        if(canQueenKill(x,y,xClone,yClone) && board[p[0]][p[1]].getPiece().getType()!=piece.getType())
+        if(canQueenKill(x,y,xClone,yClone,board))
           return true;
-        xClone=xClone+2;
-        yClone=yClone+2;
+        xClone=xClone+1;
+        yClone=yClone+1;
       }
       xClone=x;
       yClone=y;
       while(xClone >= 0 && yClone < HEIGHT && xClone<WIDTH && yClone>=0){
-        p=findPiece(x,y,xClone,yClone);
-        if(canQueenKill(x,y,xClone,yClone) && board[p[0]][p[1]].getPiece().getType()!=piece.getType())
+        if(canQueenKill(x,y,xClone,yClone,board))
           return true;
-        xClone=xClone+2;
-        yClone=yClone-2;
+        xClone=xClone+1;
+        yClone=yClone-1;
       }
     }
     return false;
@@ -301,9 +298,11 @@ public class Board {
     Tile[][] boardClone=makeBoardClone(board);
     if(board[x][y].hasPiece()){
       Piece piece=board[x][y].getPiece();
-      if(!piece.isQueen() && canPieceKill(x,y,piece)) {
+      if(!piece.isQueen()) {
       if (x + 2 >= 0 && y - 2 < HEIGHT && x + 2 < WIDTH && y - 2 >= 0)
-          if (!board[x + 2][y - 2].hasPiece() && board[x + 1][y - 1].hasPiece()) {
+          if (!board[x + 2][y - 2].hasPiece() && board[x + 1][y - 1].hasPiece())
+          if(board[x+1][y-1].getPiece().getType()!=piece.getType())
+          {
             boardClone[x+2][y-2].setPiece(piece);
             boardClone[x+1][y-1].setPiece(null);
             boardClone[x][y].setPiece(null);
@@ -312,7 +311,9 @@ public class Board {
           }
       boardClone=makeBoardClone(board);
       if (x + 2 >= 0 && y + 2 < HEIGHT && x+2<WIDTH && y + 2 >= 0)
-          if (!board[x + 2][y + 2].hasPiece() && board[x + 1][y + 1].hasPiece()) {
+          if (!board[x + 2][y + 2].hasPiece() && board[x + 1][y + 1].hasPiece())
+            if(board[x+1][y+1].getPiece().getType()!=piece.getType())
+            {
             boardClone[x+2][y+2].setPiece(piece);
             boardClone[x+1][y+1].setPiece(null);
             boardClone[x][y].setPiece(null);
@@ -321,7 +322,9 @@ public class Board {
           }
       boardClone=makeBoardClone(board);
       if (x - 2 >= 0 && y - 2 < HEIGHT && x - 2 < WIDTH && y - 2 >= 0)
-          if (!board[x - 2][y - 2].hasPiece() && board[x - 1][y - 1].hasPiece()) {
+          if (!board[x - 2][y - 2].hasPiece() && board[x - 1][y - 1].hasPiece())
+            if(board[x-1][y-1].getPiece().getType()!=piece.getType())
+            {
             boardClone[x-2][y-2].setPiece(piece);
             boardClone[x-1][y-1].setPiece(null);
             boardClone[x][y].setPiece(null);
@@ -330,16 +333,100 @@ public class Board {
           }
       boardClone=makeBoardClone(board);
       if (x - 2 >= 0 && y + 2 < HEIGHT && x-2 < WIDTH && y+2 >= 0)
-          if (!board[x - 2][y + 2].hasPiece() && board[x - 1][y + 1].hasPiece()) {
+          if (!board[x - 2][y + 2].hasPiece() && board[x - 1][y + 1].hasPiece())
+            if(board[x-1][y+1].getPiece().getType()!=piece.getType())
+            {
             boardClone[x-2][y+2].setPiece(piece);
             boardClone[x-1][y+1].setPiece(null);
             boardClone[x][y].setPiece(null);
             road4++;
             road4+=getLongestPawnKill(x-2,y+2,boardClone);
           }
+      }
+      if(piece.isQueen()) {
+        int road1clone;
+        int road2clone;
+        int road3clone;
+        int road4clone;
+        int xClone=x;
+        int yClone=y;
+        int[] p;
+        while(xClone >= 0 && yClone < HEIGHT && xClone<WIDTH && yClone>=0){
+          road1clone=0;
+          boardClone=makeBoardClone(board);
+          p=findPiece(x,y,xClone,yClone,board);
+          if(canQueenKill(x,y,xClone,yClone,board)) {
+              boardClone[x][y].setPiece(null);
+              boardClone[p[0]][p[1]].setPiece(null);
+              boardClone[xClone][yClone].setPiece(piece);
+              road1clone++;
+              road1clone += getLongestPawnKill(xClone,yClone,boardClone);
+          }
+          if(road1clone>road1)
+            road1=road1clone;
 
-    }
-      //Trzeba zrobic podobnie dla damy
+          xClone=xClone-1;
+          yClone=yClone+1;
+        }
+        xClone=x;
+        yClone=y;
+        while(xClone >= 0 && yClone < HEIGHT && xClone<WIDTH && yClone>=0){
+          road2clone=0;
+          boardClone=makeBoardClone(board);
+          p=findPiece(x,y,xClone,yClone,board);
+          if(canQueenKill(x,y,xClone,yClone,board)) {
+              boardClone[x][y].setPiece(null);
+              boardClone[p[0]][p[1]].setPiece(null);
+              boardClone[xClone][yClone].setPiece(piece);
+              road2clone++;
+              road2clone += getLongestPawnKill(xClone,yClone,boardClone);
+          }
+          if(road2clone>road2)
+            road2=road2clone;
+
+          xClone=xClone-1;
+          yClone=yClone-1;
+        }
+        xClone=x;
+        yClone=y;
+        while(xClone >= 0 && yClone < HEIGHT && xClone<WIDTH && yClone>=0){
+          road3clone=0;
+          boardClone=makeBoardClone(board);
+          p=findPiece(x,y,xClone,yClone,board);
+          if(canQueenKill(x,y,xClone,yClone,board)) {
+              boardClone[x][y].setPiece(null);
+              boardClone[p[0]][p[1]].setPiece(null);
+              boardClone[xClone][yClone].setPiece(piece);
+              road3clone++;
+              road3clone += getLongestPawnKill(xClone,yClone,boardClone);
+          }
+          if(road3clone>road3)
+            road3=road3clone;
+
+          xClone=xClone+1;
+          yClone=yClone+1;
+        }
+        xClone=x;
+        yClone=y;
+        while(xClone >= 0 && yClone < HEIGHT && xClone<WIDTH && yClone>=0){
+          road4clone=0;
+          boardClone=makeBoardClone(board);
+          p=findPiece(x,y,xClone,yClone,board);
+          if(canQueenKill(x,y,xClone,yClone,board))
+          {
+            boardClone[x][y].setPiece(null);
+            boardClone[p[0]][p[1]].setPiece(null);
+            boardClone[xClone][yClone].setPiece(piece);
+            road4clone++;
+            road4clone += getLongestPawnKill(xClone,yClone,boardClone);
+          }
+          if(road4clone>road4)
+            road4=road4clone;
+
+          xClone=xClone+1;
+          yClone=yClone-1;
+        }
+      }
     }
     return Math.max(Math.max(road1,road2),Math.max(road3,road4));
   }
@@ -358,9 +445,10 @@ public class Board {
   }
   private boolean isThisLongestKill(int x, int y,int x1,int y1){
     Tile[][] clone =makeBoardClone(board);
+    int[] p=findPiece(x,y,x1,y1,board);
     clone[x1][y1].setPiece(clone[x][y].getPiece());
     clone[x][y].setPiece(null);
-    clone[(x + (x1 - x) / 2)][(y + (y1 - y) / 2)].setPiece(null);
+    clone[p[0]][p[1]].setPiece(null);
     return getLongestPossibleKill() == (getLongestPawnKill(x1, y1, clone) + 1);
   }
 
@@ -379,14 +467,16 @@ public class Board {
 
   private Tile[][] makeBoardClone(Tile[][] board){
     Tile[][] boardClone=new Tile[HEIGHT][WIDTH];
-    for(int i=0;i<HEIGHT;i++)
-      for(int j=0; j<WIDTH;j++){
-        boardClone[j][i]=new Tile(true,i,j);
-        if(board[j][i].hasPiece()) {
-          boardClone[j][i].setPiece(new Piece(board[j][i].getPiece().getType(),i,j));
+    for(int y=0;y<HEIGHT;y++)
+      for(int x=0; x<WIDTH;x++){
+        boardClone[x][y]=new Tile((x+y)%2!=0,x,y);
+        if(board[x][y].hasPiece()) {
+          boardClone[x][y].setPiece(new Piece(board[x][y].getPiece().getType(),x,y));
+          if(board[x][y].getPiece().isQueen())
+            boardClone[x][y].getPiece().change();
         }
         else
-          boardClone[j][i].setPiece(null);
+          boardClone[x][y].setPiece(null);
       }
     return boardClone;
   }
