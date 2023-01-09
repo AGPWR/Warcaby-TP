@@ -13,7 +13,7 @@ public class Piece extends StackPane {
   private double mouseX, mouseY;
   private double oldX, oldY;
 
-  public Piece(PieceType type, int x, int y) {
+  public Piece(PieceType type, int x, int y,boolean canMove) {
     this.type = type;
     queen = false;
     move(x, y);
@@ -37,6 +37,7 @@ public class Piece extends StackPane {
     ellipse.setTranslateY((TILE_SIZE - TILE_SIZE * 0.26 * 2) / 2);
 
     getChildren().addAll(bg, ellipse);
+    if(canMove){
     setOnMousePressed(e -> {
       toFront();
       mouseX = e.getSceneX();
@@ -45,7 +46,7 @@ public class Piece extends StackPane {
     setOnMouseDragged(e -> {
       if (getScene().getHeight() > e.getSceneY() && e.getSceneY() > 0 && getScene().getWidth() > e.getSceneX() && e.getSceneX() > 0)
         relocate(e.getSceneX() - mouseX + oldX, e.getSceneY() - mouseY + oldY);
-    });
+    });}
   }
 
   public void move(int x, int y) {

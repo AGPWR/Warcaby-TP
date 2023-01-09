@@ -4,28 +4,38 @@ import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 
+import java.io.PrintWriter;
+
 public class Board {
 
   public final static int TILE_SIZE = 75;
 
   public PieceType turn = PieceType.WHITE;
+  public int Player;
   public int WIDTH = 8;
   public int HEIGHT = 8;
   private final Parent content;
 
-  private int LastX;
-  private int LastY;
+
+  private PrintWriter out;
+
   private int LastQDirection = 0;
   private Tile[][] board = new Tile[WIDTH][HEIGHT];
 
   private final Group tileGroup = new Group();
   private final Group pieceGroup = new Group();
 
-  public Board() {
-    this.content = createContent();
+  public Board(int Player,PrintWriter out) {
+    this.Player=Player;
+    this.out=out;
+    if(Player==1)
+      this.content = createContent(PieceType.RED,PieceType.WHITE);
+    else
+      this.content=createContent(PieceType.WHITE,PieceType.RED);
+
   }
 
-  private Parent createContent() {
+  private Parent createContent(PieceType player1, PieceType player2) {
     Pane root = new Pane();
     root.setPrefSize(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE);
     root.getChildren().addAll(tileGroup, pieceGroup);
@@ -37,10 +47,12 @@ public class Board {
 
         Piece piece = null;
         if (y <= 2 && (x + y) % 2 != 0) {
-          piece = makePiece(PieceType.RED, x, y);
+          player1.moveDir=1;
+          piece = makePiece(player1, x, y);
         }
         if (y >= 5 && (x + y) % 2 != 0) {
-          piece = makePiece(PieceType.WHITE, x, y);
+          player2.moveDir=-1;
+          piece = makePiece(player2, x, y);
         }
         if (piece != null) {
           tile.setPiece(piece);
@@ -56,55 +68,25 @@ public class Board {
     return this.content;
   }
 
+
   private Piece makePiece(PieceType type, int x, int y) {
-    Piece piece = new Piece(type, x, y);
+    PieceType p = (Player == 1) ? PieceType.WHITE : PieceType.RED;
+
+    Piece piece = new Piece(type, x, y,type==p);
+
     piece.setOnMouseClicked(e -> {
       int newX = toBoard(piece.getLayoutX());
       int newY = toBoard(piece.getLayoutY());
-      MoveResult result = tryMove(piece, newX, newY);
       int x0 = toBoard(piece.getOldX());
       int y0 = toBoard(piece.getOldY());
-
-      switch (result.getType()) {
-        case NONE:
-          piece.abortMove();
-          break;
-        case NORMAL:
-          piece.move(newX, newY);
-          board[x0][y0].setPiece(null);
-          board[newX][newY].setPiece(piece);
-          if ((newY == 0 || newY == 7)) {
-            piece.change();
-          }
-          turn = (turn == PieceType.WHITE) ? PieceType.RED : PieceType.WHITE;
-          break;
-        case KILL:
-          piece.move(newX, newY);
-          board[x0][y0].setPiece(null);
-          board[newX][newY].setPiece(piece);
-          Piece otherPiece = result.getPiece();
-          board[toBoard(otherPiece.getOldX())][toBoard(otherPiece.getOldY())].setPiece(null);
-          pieceGroup.getChildren().remove(otherPiece);
-          if (piece.isQueen()) {
-            LastQDirection = getDirection(x0, y0, newX, newY);
-          }
-          if (!canPieceKill(newX, newY, piece, board, LastQDirection)) {
-            if ((newY == 0 && piece.getType() == PieceType.WHITE) || (newY == 7 && piece.getType() == PieceType.RED)) {
-              piece.change();
-            }
-            LastQDirection = 0;
-            turn = (turn == PieceType.WHITE) ? PieceType.RED : PieceType.WHITE;
-          }
-
-          break;
-      }
+      makeMove(x0,y0,newX,newY,true);
     });
+
     return piece;
   }
 
 
   private MoveResult tryMove(Piece piece, int newX, int newY) {
-    System.out.println(getLongestPossibleKill());
     if (newX < 0 || newX >= HEIGHT || newY < 0 || newY >= HEIGHT)
       return new MoveResult(MoveType.NONE);
     if (board[newX][newY].hasPiece() || (newX + newY) % 2 == 0 || turn != piece.getType()) {
@@ -372,13 +354,6 @@ public class Board {
   }
 
 
-  public int getLastX() {
-    return LastX;
-  }
-
-  public int getLastY() {
-    return LastY;
-  }
 
   private int toBoard(double pixel) {
     return (int) (pixel + TILE_SIZE / 2) / TILE_SIZE;
@@ -390,7 +365,7 @@ public class Board {
       for (int x = 0; x < WIDTH; x++) {
         boardClone[x][y] = new Tile((x + y) % 2 != 0, x, y);
         if (board[x][y].hasPiece()) {
-          boardClone[x][y].setPiece(new Piece(board[x][y].getPiece().getType(), x, y));
+          boardClone[x][y].setPiece(new Piece(board[x][y].getPiece().getType(), x, y,true));
           if (board[x][y].getPiece().isQueen())
             boardClone[x][y].getPiece().change();
         } else
@@ -418,5 +393,71 @@ public class Board {
     }
     return 0;
   }
+
+  public void send(String message){
+    out.println(message);
+  }
+
+  public void makeMove(int x0,int y0,int newX,int newY,boolean send){
+    Piece piece=board[x0][y0].getPiece();
+    MoveResult result = tryMove(piece, newX, newY);
+    switch (result.getType()) {
+      case NONE:
+        piece.abortMove();
+        break;
+      case NORMAL:
+        piece.move(newX, newY);
+        board[x0][y0].setPiece(null);
+        board[newX][newY].setPiece(piece);
+        if ((newY == 0 || newY == HEIGHT-1)) {
+          piece.change();
+        }
+        turn = (turn == PieceType.WHITE) ? PieceType.RED : PieceType.WHITE;
+        if(send){
+        send("n"+x0+y0+newX+newY);
+        send("t");}
+        break;
+      case KILL:
+        piece.move(newX, newY);
+        board[x0][y0].setPiece(null);
+        board[newX][newY].setPiece(piece);
+        Piece otherPiece = result.getPiece();
+        board[toBoard(otherPiece.getOldX())][toBoard(otherPiece.getOldY())].setPiece(null);
+        pieceGroup.getChildren().remove(otherPiece);
+        if (piece.isQueen()) {
+          LastQDirection = getDirection(x0, y0, newX, newY);
+        }
+        if(send)
+          send("k"+x0+y0+newX+newY);
+
+        if (!canPieceKill(newX, newY, piece, board, LastQDirection)) {
+          if(Player==1)
+          {if ((newY == 0 && piece.getType() == PieceType.WHITE) || (newY == HEIGHT-1 && piece.getType() == PieceType.RED))
+            piece.change();}
+          else
+          if ((newY == 0 && piece.getType() == PieceType.RED) || (newY == HEIGHT-1 && piece.getType() == PieceType.WHITE))
+            piece.change();
+
+          LastQDirection = 0;
+          turn = (turn == PieceType.WHITE) ? PieceType.RED : PieceType.WHITE;
+          if(send)
+            send("t");
+        }
+
+
+        break;
+    }
+
+
+  }
+
+
+
+
+
+
+
+
+
 
 }
