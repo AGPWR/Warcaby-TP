@@ -109,9 +109,9 @@ public class RussianBoard {
                 int y1 = y0 + (newY - y0) / 2;
 
                 if (board[x1][y1].hasPiece() && board[x1][y1].getPiece().getType() != piece.getType()) {
-                    if (isThisLongestKill(x0, y0, newX, newY)) {
+                   // if (isThisLongestKill(x0, y0, newX, newY))
                         return new MoveResult(MoveType.KILL, board[x1][y1].getPiece());
-                    }
+
                 }
 
             }
@@ -122,7 +122,7 @@ public class RussianBoard {
             }
             if (canQueenKill(x0, y0, newX, newY, board)) {
                 int[] x = findPiece(x0, y0, newX, newY, board);
-                if (isThisLongestKill(x0, y0, newX, newY))
+                //if (isThisLongestKill(x0, y0, newX, newY))
                     return new MoveResult(MoveType.KILL, board[x[0]][x[1]].getPiece());
             }
         }
@@ -450,14 +450,15 @@ public class RussianBoard {
                 if(send)
                     send("i"+x0+y0+newX+newY);
 
-                if (!canPieceKill(newX, newY, piece, board, LastQDirection)) {
-                    if(Player==1) {
-                        if ((newY == 0 && piece.getType() == PieceType.WHITE) || (newY == HEIGHT-1 && piece.getType() == PieceType.RED))
-                            piece.change();
-                    }
-                    else
-                    if ((newY == 0 && piece.getType() == PieceType.RED) || (newY == HEIGHT-1 && piece.getType() == PieceType.WHITE))
+                if(Player==1) {
+                    if ((newY == 0 && piece.getType() == PieceType.WHITE) || (newY == HEIGHT-1 && piece.getType() == PieceType.RED))
                         piece.change();
+                }
+                else
+                if ((newY == 0 && piece.getType() == PieceType.RED) || (newY == HEIGHT-1 && piece.getType() == PieceType.WHITE))
+                    piece.change();
+                if (!canPieceKill(newX, newY, piece, board, LastQDirection)) {
+
 
                     LastQDirection = 0;
                     turn = (turn == PieceType.WHITE) ? PieceType.RED : PieceType.WHITE;
