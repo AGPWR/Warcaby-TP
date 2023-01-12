@@ -2,16 +2,14 @@ package com.example;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -54,22 +52,49 @@ public class Player extends Application implements Runnable {
         Button b1 = new Button("Klasyczne");
         Button b2 = new Button("Polskie");
         Button b3 = new Button("Rosyjskie");
-        GridPane gp = new GridPane();
-        gp.setAlignment(Pos.CENTER);
-        gp.add(b1,2,2);
-        gp.add(b2,3,2);
-        gp.add(b3,4,2);
-        gp.setMinSize(500,500);
-        Scene menu = new Scene(gp);
+        b1.setPadding(new Insets(20));
+        b2.setPadding(new Insets(20));
+        b3.setPadding(new Insets(20));
+        b1.setPrefWidth(75);
+        b2.setPrefWidth(75);
+        b3.setPrefWidth(75);
+        b1.setMinWidth(100);
+        b2.setMinWidth(100);
+        b3.setMinWidth(100);
+
+        BorderPane bp = new BorderPane();
+        Text t = new Text("Wybierz tryb gry");
+        t.setStyle("-fx-font: 24 arial;");
+
+        bp.setTop(t);
+        HBox hb = new HBox();
+        hb.getChildren().addAll(b1,b2,b3);
+        hb.setSpacing(50);
+        HBox.setMargin(b1, new Insets(125, 0, 0, 50));
+        HBox.setMargin(b2, new Insets(125, 0, 0, 0));
+        HBox.setMargin(b3, new Insets(125, 0, 0, 0));
+        bp.setCenter(hb);
+        bp.setBackground(new Background(new BackgroundFill(Color.GREENYELLOW, new CornerRadii(0), Insets.EMPTY)));
+        BorderPane.setAlignment(hb, Pos.CENTER);
+        BorderPane.setAlignment(t, Pos.CENTER);
+        BorderPane.setMargin(t, new Insets(50, 0,0, 0));
+
+        Scene menu = new Scene(bp, 500, 500);
         stage.setTitle("WARCABY");
         stage.setScene(menu);
         stage.show();
 
-        GridPane gpWait = new GridPane();
-
+        BorderPane bp1 = new BorderPane();
         Text waiting = new Text("Szukanie przeciwnika...");
-        gpWait.add(waiting, 1,1);
-        Scene lookingForEnemy = new Scene(gpWait);
+        waiting.setStyle("-fx-font: 24 arial;");
+        bp1.setBackground(new Background(new BackgroundFill(Color.GREENYELLOW, new CornerRadii(0), Insets.EMPTY)));
+        StackPane p = new StackPane();
+        p.setPrefSize(499, 499);
+        p.getChildren().add(waiting);
+        StackPane.setAlignment(p,Pos.CENTER);
+        bp1.setCenter(p);
+
+        Scene lookingForEnemy = new Scene(bp1, Color.GREENYELLOW);
 
 
         b1.setOnAction( event -> {
@@ -200,7 +225,6 @@ public class Player extends Application implements Runnable {
                     actualPlayer=polishBoard.turn;
                 if(gameType == 3)
                     actualPlayer=russianBoard.turn;
-
                 notifyAll();
             }
         }

@@ -17,6 +17,9 @@ public class Board {
   private final Parent content;
   public int firstPlayerPieces = 0;
   public int secondPlayerPieces = 0;
+  public boolean redWon = false;
+  public boolean whiteWon = false;
+  public boolean draw = false;
 
 
   private PrintWriter out;
@@ -472,9 +475,11 @@ public class Board {
   public void checkIfEnd(){
     if(firstPlayerPieces == 0){
       send("REDWON");
+      redWon = true;
     }
     if(secondPlayerPieces == 0){
       send("WHITEWON");
+      whiteWon = true;
     }
   }
 }
