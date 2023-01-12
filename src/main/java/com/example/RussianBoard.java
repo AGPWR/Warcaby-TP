@@ -426,7 +426,7 @@ public class RussianBoard {
                 }
                 turn = (turn == PieceType.WHITE) ? PieceType.RED : PieceType.WHITE;
                 if(send){
-                    send("n"+x0+y0+newX+newY);
+                    send("j"+x0+y0+newX+newY);
                     send("t");}
                 break;
             case KILL:
@@ -448,7 +448,7 @@ public class RussianBoard {
                     LastQDirection = getDirection(x0, y0, newX, newY);
                 }
                 if(send)
-                    send("k"+x0+y0+newX+newY);
+                    send("i"+x0+y0+newX+newY);
 
                 if (!canPieceKill(newX, newY, piece, board, LastQDirection)) {
                     if(Player==1) {

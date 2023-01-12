@@ -50,37 +50,6 @@ public class Player extends Application implements Runnable {
     }
     @Override
     public void start(Stage stage) throws Exception {
-        /*listenSocket();
-        String str = in.readLine();
-        System.out.println(str);
-        if (str.equals("2")) {
-            board = new Board(2,out);
-        }
-        if (str.equals("1")) {
-            board = new Board(1,out);
-        }
-
-        startThread();
-        Scene scene = new Scene(board.getContent());
-        stage.setScene(scene);
-        stage.setTitle("");
-        stage.setResizable(false);
-        stage.show();*/
-
-
-        /*if (str.equals("2")) {
-            board = new Board(2,out);
-        }
-        if (str.equals("1")) {
-            board = new Board(1,out);
-        }
-
-        startThread();
-        Scene scene = new Scene(board.getContent());
-        stage.setScene(scene);
-        stage.setTitle("");
-        stage.setResizable(false);
-        stage.show();*/
 
         Button b1 = new Button("Klasyczne");
         Button b2 = new Button("Polskie");
@@ -165,13 +134,13 @@ public class Player extends Application implements Runnable {
             }
             System.out.println(str);
             if (str.equals("2")) {
-                polishBoard = new PolishBoard(2,out);
+                russianBoard = new RussianBoard(2,out);
             }
             if (str.equals("1")) {
-                polishBoard = new PolishBoard(1,out);
+                russianBoard = new RussianBoard(1,out);
             }
             startThread();
-            Scene scene = new Scene(polishBoard.getContent());
+            Scene scene = new Scene(russianBoard.getContent());
             stage.setTitle("");
             stage.setResizable(false);
             stage.setScene(scene);
@@ -246,7 +215,12 @@ public class Player extends Application implements Runnable {
                     }
                 }
                 receive();
-                actualPlayer=board.turn;
+                if(gameType == 1)
+                    actualPlayer=board.turn;
+                if(gameType == 2)
+                    actualPlayer=polishBoard.turn;
+                if(gameType == 3)
+                    actualPlayer=russianBoard.turn;
                 notifyAll();
             }
         }
@@ -272,6 +246,15 @@ public class Player extends Application implements Runnable {
                 int y1 = translate(Character.getNumericValue(str.charAt(4)), 10);
 
                 Platform.runLater(()->polishBoard.makeMove(x0, y0, x1, y1, false));
+            }
+
+            if (str.charAt(0) == 'j' || str.charAt(0) == 'i') {
+                int x0 = translate(Character.getNumericValue(str.charAt(1)), 8);
+                int y0 = translate(Character.getNumericValue(str.charAt(2)), 8);
+                int x1 = translate(Character.getNumericValue(str.charAt(3)), 8);
+                int y1 = translate(Character.getNumericValue(str.charAt(4)), 8);
+
+                Platform.runLater(()->russianBoard.makeMove(x0, y0, x1, y1, false));
             }
 
             if (str.equals("REDWON")){
