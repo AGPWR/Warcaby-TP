@@ -2,7 +2,14 @@ package com.example;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.BufferedReader;
@@ -19,6 +26,7 @@ public class Player extends Application implements Runnable {
     BufferedReader in = null;
 
     private Board board;
+    private PolishBoard polishBoard;
 
     private PieceType player = PieceType.WHITE;
 
@@ -40,7 +48,7 @@ public class Player extends Application implements Runnable {
     }
     @Override
     public void start(Stage stage) throws Exception {
-        listenSocket();
+        /*listenSocket();
         String str = in.readLine();
         System.out.println(str);
         if (str.equals("2")) {
@@ -55,7 +63,89 @@ public class Player extends Application implements Runnable {
         stage.setScene(scene);
         stage.setTitle("");
         stage.setResizable(false);
+        stage.show();*/
+
+
+        /*if (str.equals("2")) {
+            board = new Board(2,out);
+        }
+        if (str.equals("1")) {
+            board = new Board(1,out);
+        }
+
+        startThread();
+        Scene scene = new Scene(board.getContent());
+        stage.setScene(scene);
+        stage.setTitle("");
+        stage.setResizable(false);
+        stage.show();*/
+
+        Button b1 = new Button("Klasyczne");
+        Button b2 = new Button("Polskie");
+        Button b3 = new Button("Rosyjskie");
+        GridPane gp = new GridPane();
+        gp.setAlignment(Pos.CENTER);
+        gp.add(b1,2,2);
+        gp.add(b2,3,2);
+        gp.add(b3,4,2);
+        gp.setMinSize(500,500);
+        Scene menu = new Scene(gp);
+        stage.setTitle("WARCABY");
+        stage.setScene(menu);
         stage.show();
+
+        GridPane gpWait = new GridPane();
+        Text waiting = new Text("Szukanie przeciwnika");
+        gpWait.add(waiting, 1,1);
+        Scene lookingForEnemy = new Scene(gpWait);
+
+        b1.setOnAction( event -> {
+            stage.setScene(lookingForEnemy);
+            listenSocket();
+            String str = null;
+            try {
+                str = in.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println(str);
+            if (str.equals("2")) {
+                board = new Board(2,out);
+            }
+            if (str.equals("1")) {
+                board = new Board(1,out);
+            }
+            startThread();
+            Scene scene = new Scene(board.getContent());
+            stage.setTitle("");
+            stage.setResizable(false);
+            stage.setScene(scene);
+        });
+
+        b2.setOnAction( event -> {
+            stage.setScene(lookingForEnemy);
+            listenSocket();
+            String str = null;
+            try {
+                str = in.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println(str);
+            if (str.equals("2")) {
+                polishBoard = new PolishBoard(2,out);
+            }
+            if (str.equals("1")) {
+                polishBoard = new PolishBoard(1,out);
+            }
+            startThread();
+            Scene scene = new Scene(polishBoard.getContent());
+            stage.setTitle("");
+            stage.setResizable(false);
+            stage.setScene(scene);
+        });
+
+
     }
 
     public static void main(String[] args) {
@@ -135,6 +225,12 @@ public class Player extends Application implements Runnable {
                 int y1 = translate(Character.getNumericValue(str.charAt(4)), 8);
 
                 Platform.runLater(()->board.makeMove(x0, y0, x1, y1, false));
+            }
+            if (str.equals("REDWON")){
+                System.out.println("czerwony wygral");
+            }
+            if (str.equals("WHITEWON")){
+                System.out.println("bialy wygral");
             }
         } catch (IOException e) {
             System.out.println("Read failed");

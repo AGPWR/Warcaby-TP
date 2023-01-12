@@ -15,6 +15,8 @@ public class Board {
   public int WIDTH = 8;
   public int HEIGHT = 8;
   private final Parent content;
+  public int firstPlayerPieces = 0;
+  public int secondPlayerPieces = 0;
 
 
   private PrintWriter out;
@@ -49,10 +51,12 @@ public class Board {
         if (y <= 2 && (x + y) % 2 != 0) {
           player1.moveDir=1;
           piece = makePiece(player1, x, y);
+          firstPlayerPieces++;
         }
         if (y >= 5 && (x + y) % 2 != 0) {
           player2.moveDir=-1;
           piece = makePiece(player2, x, y);
+          secondPlayerPieces++;
         }
         if (piece != null) {
           tile.setPiece(piece);
@@ -398,6 +402,14 @@ public class Board {
     out.println(message);
   }
 
+  public int getFirstPlayerPiecesCount(){
+    return firstPlayerPieces;
+  }
+
+  public int getSecondPlayerPiecesCount(){
+    return secondPlayerPieces;
+  }
+
   public void makeMove(int x0,int y0,int newX,int newY,boolean send){
     Piece piece=board[x0][y0].getPiece();
     MoveResult result = tryMove(piece, newX, newY);
@@ -424,6 +436,14 @@ public class Board {
         Piece otherPiece = result.getPiece();
         board[toBoard(otherPiece.getOldX())][toBoard(otherPiece.getOldY())].setPiece(null);
         pieceGroup.getChildren().remove(otherPiece);
+        if(otherPiece.getType() == PieceType.WHITE){
+          firstPlayerPieces--;
+          System.out.println("Zbito bialego");
+        }
+        if(otherPiece.getType() == PieceType.RED){
+          secondPlayerPieces--;
+          System.out.println("Zbito czerwonego");
+        }
         if (piece.isQueen()) {
           LastQDirection = getDirection(x0, y0, newX, newY);
         }
@@ -431,9 +451,10 @@ public class Board {
           send("k"+x0+y0+newX+newY);
 
         if (!canPieceKill(newX, newY, piece, board, LastQDirection)) {
-          if(Player==1)
-          {if ((newY == 0 && piece.getType() == PieceType.WHITE) || (newY == HEIGHT-1 && piece.getType() == PieceType.RED))
-            piece.change();}
+          if(Player==1) {
+            if ((newY == 0 && piece.getType() == PieceType.WHITE) || (newY == HEIGHT-1 && piece.getType() == PieceType.RED))
+              piece.change();
+          }
           else
           if ((newY == 0 && piece.getType() == PieceType.RED) || (newY == HEIGHT-1 && piece.getType() == PieceType.WHITE))
             piece.change();
@@ -443,21 +464,17 @@ public class Board {
           if(send)
             send("t");
         }
-
-
+        checkIfEnd();
         break;
     }
-
-
   }
 
-
-
-
-
-
-
-
-
-
+  public void checkIfEnd(){
+    if(firstPlayerPieces == 0){
+      send("REDWON");
+    }
+    if(secondPlayerPieces == 0){
+      send("WHITEWON");
+    }
+  }
 }

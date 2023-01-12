@@ -8,22 +8,17 @@ public class Game implements Runnable {
     private Socket firstPlayer;
     private Socket secondPlayer;
 
-
     private final static int FIRST = 1;
     private final static int SECOND = 2;
     private static int turn = FIRST;
 
-
     public Game(Socket firstPlayer, Socket secondPlayer) {
         this.firstPlayer = firstPlayer;
         this.secondPlayer = secondPlayer;
-
-
     }
 
     @Override
     public void run() {
-
         try {
             InputStream inputF = firstPlayer.getInputStream();
             BufferedReader inF = new BufferedReader(new InputStreamReader(inputF));
@@ -63,6 +58,4 @@ public class Game implements Runnable {
             System.err.println("ex");
         }
     }
-
-
 }
