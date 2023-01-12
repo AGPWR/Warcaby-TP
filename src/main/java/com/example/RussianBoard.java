@@ -6,14 +6,14 @@ import javafx.scene.layout.Pane;
 
 import java.io.PrintWriter;
 
-public class PolishBoard {
+public class RussianBoard {
 
     public final static int TILE_SIZE = 75;
 
     public PieceType turn = PieceType.WHITE;
     public int Player;
-    public int WIDTH = 10;
-    public int HEIGHT = 10;
+    public int WIDTH = 8;
+    public int HEIGHT = 8;
     private final Parent content;
     public int firstPlayerPieces = 0;
     public int secondPlayerPieces = 0;
@@ -27,7 +27,7 @@ public class PolishBoard {
     private final Group tileGroup = new Group();
     private final Group pieceGroup = new Group();
 
-    public PolishBoard(int Player,PrintWriter out) {
+    public RussianBoard(int Player,PrintWriter out) {
         this.Player=Player;
         this.out=out;
         if(Player==1)
@@ -48,12 +48,12 @@ public class PolishBoard {
                 tileGroup.getChildren().add(tile);
 
                 Piece piece = null;
-                if (y <= 3 && (x + y) % 2 != 0) {
+                if (y <= 2 && (x + y) % 2 != 0) {
                     player1.moveDir=1;
                     piece = makePiece(player1, x, y);
                     firstPlayerPieces++;
                 }
-                if (y >= 6 && (x + y) % 2 != 0) {
+                if (y >= 5 && (x + y) % 2 != 0) {
                     player2.moveDir=-1;
                     piece = makePiece(player2, x, y);
                     secondPlayerPieces++;
@@ -426,7 +426,7 @@ public class PolishBoard {
                 }
                 turn = (turn == PieceType.WHITE) ? PieceType.RED : PieceType.WHITE;
                 if(send){
-                    send("N"+x0+y0+newX+newY);
+                    send("n"+x0+y0+newX+newY);
                     send("t");}
                 break;
             case KILL:
@@ -448,7 +448,7 @@ public class PolishBoard {
                     LastQDirection = getDirection(x0, y0, newX, newY);
                 }
                 if(send)
-                    send("K"+x0+y0+newX+newY);
+                    send("k"+x0+y0+newX+newY);
 
                 if (!canPieceKill(newX, newY, piece, board, LastQDirection)) {
                     if(Player==1) {

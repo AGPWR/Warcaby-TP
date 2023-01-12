@@ -27,8 +27,10 @@ public class Player extends Application implements Runnable {
 
     private Board board;
     private PolishBoard polishBoard;
+    private RussianBoard russianBoard;
 
     private PieceType player = PieceType.WHITE;
+    public int gameType;
 
     public final static PieceType PLAYER1 = PieceType.WHITE;
     public final static PieceType PLAYER2 = PieceType.RED;
@@ -95,12 +97,17 @@ public class Player extends Application implements Runnable {
         stage.show();
 
         GridPane gpWait = new GridPane();
-        Text waiting = new Text("Szukanie przeciwnika");
+
+        Text waiting = new Text("Szukanie przeciwnika...");
         gpWait.add(waiting, 1,1);
         Scene lookingForEnemy = new Scene(gpWait);
 
+
         b1.setOnAction( event -> {
+            gameType = 1;
             stage.setScene(lookingForEnemy);
+            stage.show();
+
             listenSocket();
             String str = null;
             try {
@@ -123,6 +130,31 @@ public class Player extends Application implements Runnable {
         });
 
         b2.setOnAction( event -> {
+            gameType = 2;
+            stage.setScene(lookingForEnemy);
+            listenSocket();
+            String str = null;
+            try {
+                str = in.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println(str);
+            if (str.equals("2")) {
+                polishBoard = new PolishBoard(2,out);
+            }
+            if (str.equals("1")) {
+                polishBoard = new PolishBoard(1,out);
+            }
+            startThread();
+            Scene scene = new Scene(polishBoard.getContent());
+            stage.setTitle("");
+            stage.setResizable(false);
+            stage.setScene(scene);
+        });
+
+        b3.setOnAction( event -> {
+            gameType = 3;
             stage.setScene(lookingForEnemy);
             listenSocket();
             String str = null;
@@ -193,7 +225,13 @@ public class Player extends Application implements Runnable {
                 }
 
                 receive();
-                actualPlayer=board.turn;
+                if(gameType == 1)
+                    actualPlayer=board.turn;
+                if(gameType == 2)
+                    actualPlayer=polishBoard.turn;
+                if(gameType == 3)
+                    actualPlayer=russianBoard.turn;
+
                 notifyAll();
             }
         }
@@ -226,6 +264,16 @@ public class Player extends Application implements Runnable {
 
                 Platform.runLater(()->board.makeMove(x0, y0, x1, y1, false));
             }
+
+            if (str.charAt(0) == 'N' || str.charAt(0) == 'K') {
+                int x0 = translate(Character.getNumericValue(str.charAt(1)), 10);
+                int y0 = translate(Character.getNumericValue(str.charAt(2)), 10);
+                int x1 = translate(Character.getNumericValue(str.charAt(3)), 10);
+                int y1 = translate(Character.getNumericValue(str.charAt(4)), 10);
+
+                Platform.runLater(()->polishBoard.makeMove(x0, y0, x1, y1, false));
+            }
+
             if (str.equals("REDWON")){
                 System.out.println("czerwony wygral");
             }
