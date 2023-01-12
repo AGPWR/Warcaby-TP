@@ -33,6 +33,8 @@ public class Player extends Application implements Runnable {
     public final static PieceType PLAYER1 = PieceType.WHITE;
     public final static PieceType PLAYER2 = PieceType.RED;
 
+    private boolean redWin = false;
+    private boolean whiteWin = false;
 
     private static PieceType actualPlayer = PLAYER1;
 
@@ -96,6 +98,14 @@ public class Player extends Application implements Runnable {
 
         Scene lookingForEnemy = new Scene(bp1, Color.GREENYELLOW);
 
+        Button button = new Button("Powrót");
+        button.setFocusTraversable(false);
+        button.setOnAction(event -> {
+            stage.setScene(menu);
+        });
+
+
+
 
         b1.setOnAction( event -> {
             gameType = 1;
@@ -117,10 +127,17 @@ public class Player extends Application implements Runnable {
                 board = new Board(1,out);
             }
             startThread();
-            Scene scene = new Scene(board.getContent());
+            BorderPane borderpane = new BorderPane();
+            BorderPane.setAlignment(button, Pos.CENTER_RIGHT);
+            BorderPane.setMargin(button, new Insets(1,20,1,0));
+            borderpane.setBottom(button);
+            borderpane.setCenter(board.getContent());
+            Scene scene1 = new Scene(borderpane);
             stage.setTitle("");
             stage.setResizable(false);
-            stage.setScene(scene);
+            stage.setScene(scene1);
+
+            
         });
 
         b2.setOnAction( event -> {
@@ -141,10 +158,15 @@ public class Player extends Application implements Runnable {
                 polishBoard = new PolishBoard(1,out);
             }
             startThread();
-            Scene scene = new Scene(polishBoard.getContent());
+            BorderPane borderpane = new BorderPane();
+            BorderPane.setAlignment(button, Pos.CENTER_RIGHT);
+            BorderPane.setMargin(button, new Insets(1,20,1,0));
+            borderpane.setBottom(button);
+            borderpane.setCenter(polishBoard.getContent());
+            Scene scene2 = new Scene(borderpane);
             stage.setTitle("");
             stage.setResizable(false);
-            stage.setScene(scene);
+            stage.setScene(scene2);
         });
 
         b3.setOnAction( event -> {
@@ -165,10 +187,15 @@ public class Player extends Application implements Runnable {
                 russianBoard = new RussianBoard(1,out);
             }
             startThread();
-            Scene scene = new Scene(russianBoard.getContent());
+            BorderPane borderpane = new BorderPane();
+            BorderPane.setAlignment(button, Pos.CENTER_RIGHT);
+            BorderPane.setMargin(button, new Insets(1,20,1,0));
+            borderpane.setBottom(button);
+            borderpane.setCenter(russianBoard.getContent());
+            Scene scene3 = new Scene(borderpane);
             stage.setTitle("");
             stage.setResizable(false);
-            stage.setScene(scene);
+            stage.setScene(scene3);
         });
 
 
@@ -281,11 +308,15 @@ public class Player extends Application implements Runnable {
                 Platform.runLater(()->russianBoard.makeMove(x0, y0, x1, y1, false));
             }
 
+
+
             if (str.equals("REDWON")){
                 System.out.println("czerwony wygral");
+                redWin = true;
             }
             if (str.equals("WHITEWON")){
                 System.out.println("bialy wygral");
+                whiteWin = true;
             }
         } catch (IOException e) {
             System.out.println("Read failed");
