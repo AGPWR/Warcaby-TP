@@ -310,11 +310,33 @@ public class Player extends Application implements Runnable {
 
 
 
-            if (str.equals("REDWON")){
+            if (str.equals("REDWONB")){
                 System.out.println("czerwony wygral");
+                Platform.runLater(()->board.colorRed());
                 redWin = true;
             }
-            if (str.equals("WHITEWON")){
+            if (str.equals("WHITEWONB")){
+                Platform.runLater(()->board.colorWhite());
+                System.out.println("bialy wygral");
+                whiteWin = true;
+            }
+            if (str.equals("REDWONR")){
+                System.out.println("czerwony wygral");
+                Platform.runLater(()->russianBoard.colorRed());
+                redWin = true;
+            }
+            if (str.equals("WHITEWONR")){
+                Platform.runLater(()->russianBoard.colorWhite());
+                System.out.println("bialy wygral");
+                whiteWin = true;
+            }
+            if (str.equals("REDWONP")){
+                System.out.println("czerwony wygral");
+                Platform.runLater(()->polishBoard.colorRed());
+                redWin = true;
+            }
+            if (str.equals("WHITEWONP")){
+                Platform.runLater(()->polishBoard.colorWhite());
                 System.out.println("bialy wygral");
                 whiteWin = true;
             }

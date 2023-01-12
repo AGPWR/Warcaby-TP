@@ -1,5 +1,6 @@
 package com.example;
 
+import com.sun.prism.paint.Color;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
@@ -495,13 +496,13 @@ public class Board {
     if(firstPlayerPieces == 0){
       //if(Player==1)
       PieceType p = (Player == 1) ? PieceType.WHITE : PieceType.RED;
-      send("REDWON");
+      send("REDWONB");
       send("t");
     }
     else
     if(secondPlayerPieces == 0){
       PieceType p = (Player == 1) ? PieceType.WHITE : PieceType.RED;
-      send("WHITEWON");
+      send("WHITEWONB");
       send("t");
     }
 
@@ -550,4 +551,23 @@ public class Board {
     // turn=turnClone;
     return false;
   }
+  public void colorRed(){
+    for (int y = 0; y < HEIGHT; y++) {
+      for (int x = 0; x < WIDTH; x++) {
+          board[x][y].setFill(javafx.scene.paint.Color.valueOf("#DC143C"));
+          pieceGroup.getChildren().remove(board[x][y].getPiece());
+          board[x][y].setPiece(null);
+      }
+  }}
+  public void colorWhite(){
+    for (int y = 0; y < HEIGHT; y++) {
+      for (int x = 0; x < WIDTH; x++) {
+        board[x][y].setFill(javafx.scene.paint.Color.valueOf("#FFFFFF"));
+        pieceGroup.getChildren().remove(board[x][y].getPiece());
+        board[x][y].setPiece(null);
+      }
+    }}
+
+
+
 }
