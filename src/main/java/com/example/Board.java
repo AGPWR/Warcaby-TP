@@ -431,6 +431,7 @@ public class Board {
         if(send){
         send("n"+x0+y0+newX+newY);
         send("t");}
+        checkIfEnd();
         break;
       case KILL:
         piece.move(newX, newY);
@@ -473,13 +474,80 @@ public class Board {
   }
 
   public void checkIfEnd(){
+    if(!canPlayerMove(1))
+      firstPlayerPieces=0;
+    else {
+      PieceType turnClone = turn;
+      turn = (turn == PieceType.WHITE) ? PieceType.RED : PieceType.WHITE;
+       if(!canPlayerMove(1))
+         firstPlayerPieces=0;
+       turn=turnClone;
+    }
+    if(!canPlayerMove(2))
+        secondPlayerPieces=0;
+    else {
+      PieceType turnClone = turn;
+      turn = (turn == PieceType.WHITE) ? PieceType.RED : PieceType.WHITE;
+      if(!canPlayerMove(2))
+        secondPlayerPieces=0;
+      turn=turnClone;
+    }
     if(firstPlayerPieces == 0){
+      //if(Player==1)
+      PieceType p = (Player == 1) ? PieceType.WHITE : PieceType.RED;
       send("REDWON");
-      redWon = true;
+      send("t");
     }
+    else
     if(secondPlayerPieces == 0){
+      PieceType p = (Player == 1) ? PieceType.WHITE : PieceType.RED;
       send("WHITEWON");
-      whiteWon = true;
+      send("t");
     }
+
+  }
+
+
+
+  private boolean canPlayerMove(int Player){
+    PieceType p = (Player == 1) ? PieceType.WHITE : PieceType.RED;
+    if(p!=turn)
+      return true;
+    for (int y = 0; y < HEIGHT; y++) {
+      for (int x = 0; x < WIDTH; x++) {
+
+        if(board[x][y].hasPiece() && board[x][y].getPiece().getType()==p){
+          Piece piece=board[x][y].getPiece();
+          if(!piece.isQueen()) {
+            int i=0;
+            if (tryMove(piece, x+1, y+1).type == MoveType.NONE)
+              i++;
+            if (tryMove(piece, x+1, y-1).type == MoveType.NONE)
+              i++;
+            if (tryMove(piece, x-1, y+1).type == MoveType.NONE)
+              i++;
+            if (tryMove(piece, x-1, y-1).type == MoveType.NONE)
+              i++;
+            if(tryMove(piece,x-2,y-2).type==MoveType.NONE)
+              i++;
+            if(tryMove(piece,x-2,y+2).type==MoveType.NONE)
+              i++;
+            if(tryMove(piece,x+2,y+2).type==MoveType.NONE)
+              i++;
+            if(tryMove(piece,x+2,y-2).type==MoveType.NONE)
+              i++;
+            if(i!=8){
+              //turn=turnClone;
+              return true;}
+          }
+          else {
+            // turn=turnClone;
+            return true;
+          }
+        }
+      }
+    }
+    // turn=turnClone;
+    return false;
   }
 }

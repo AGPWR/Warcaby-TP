@@ -1,7 +1,7 @@
 package com.example;
 
 public class MoveResult {
-    private  MoveType type;
+    public  MoveType type;
     private Piece piece;
 
     public MoveResult(MoveType type, Piece piece){
