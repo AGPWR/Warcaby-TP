@@ -4,7 +4,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 
-import static com.example.Board.TILE_SIZE;
+import static com.example.ClassicBoard.TILE_SIZE;
 
 public class Piece extends StackPane {
 

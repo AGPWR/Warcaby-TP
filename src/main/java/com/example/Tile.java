@@ -7,10 +7,10 @@ public class Tile extends Rectangle {
     private Piece piece;
 
     public Tile(boolean isWhite, int x, int y){
-        setWidth(Board.TILE_SIZE);
-        setHeight(Board.TILE_SIZE);
+        setWidth(ClassicBoard.TILE_SIZE);
+        setHeight(ClassicBoard.TILE_SIZE);
 
-        relocate(x * Board.TILE_SIZE, y * Board.TILE_SIZE);
+        relocate(x * ClassicBoard.TILE_SIZE, y * ClassicBoard.TILE_SIZE);
 
         setFill(isWhite ? Color.valueOf("#feb") : Color.valueOf("582"));
     }

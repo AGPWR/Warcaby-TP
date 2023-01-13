@@ -10,6 +10,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,18 +24,15 @@ public class Player extends Application implements Runnable {
     PrintWriter out = null;
     BufferedReader in = null;
 
-    private Board board;
+    private ClassicBoard classicBoard;
     private PolishBoard polishBoard;
     private RussianBoard russianBoard;
 
-    private PieceType player = PieceType.WHITE;
+    private final PieceType player = PieceType.WHITE;
     public int gameType;
 
     public final static PieceType PLAYER1 = PieceType.WHITE;
     public final static PieceType PLAYER2 = PieceType.RED;
-
-    private boolean redWin = false;
-    private boolean whiteWin = false;
 
     private static PieceType actualPlayer = PLAYER1;
 
@@ -48,8 +46,9 @@ public class Player extends Application implements Runnable {
         }
 
     }
+
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
 
         Button b1 = new Button("Klasyczne");
         Button b2 = new Button("Polskie");
@@ -70,7 +69,7 @@ public class Player extends Application implements Runnable {
 
         bp.setTop(t);
         HBox hb = new HBox();
-        hb.getChildren().addAll(b1,b2,b3);
+        hb.getChildren().addAll(b1, b2, b3);
         hb.setSpacing(50);
         HBox.setMargin(b1, new Insets(125, 0, 0, 50));
         HBox.setMargin(b2, new Insets(125, 0, 0, 0));
@@ -79,7 +78,7 @@ public class Player extends Application implements Runnable {
         bp.setBackground(new Background(new BackgroundFill(Color.GREENYELLOW, new CornerRadii(0), Insets.EMPTY)));
         BorderPane.setAlignment(hb, Pos.CENTER);
         BorderPane.setAlignment(t, Pos.CENTER);
-        BorderPane.setMargin(t, new Insets(50, 0,0, 0));
+        BorderPane.setMargin(t, new Insets(50, 0, 0, 0));
 
         Scene menu = new Scene(bp, 500, 500);
         stage.setTitle("WARCABY");
@@ -93,21 +92,17 @@ public class Player extends Application implements Runnable {
         StackPane p = new StackPane();
         p.setPrefSize(499, 499);
         p.getChildren().add(waiting);
-        StackPane.setAlignment(p,Pos.CENTER);
+        StackPane.setAlignment(p, Pos.CENTER);
         bp1.setCenter(p);
 
         Scene lookingForEnemy = new Scene(bp1, Color.GREENYELLOW);
 
         Button button = new Button("Powrót");
         button.setFocusTraversable(false);
-        button.setOnAction(event -> {
-            stage.setScene(menu);
-        });
+        button.setOnAction(event -> stage.setScene(menu));
 
 
-
-
-        b1.setOnAction( event -> {
+        b1.setOnAction(event -> {
             gameType = 1;
             stage.setScene(lookingForEnemy);
             stage.show();
@@ -121,26 +116,26 @@ public class Player extends Application implements Runnable {
             }
             System.out.println(str);
             if (str.equals("2")) {
-                board = new Board(2,out);
+                classicBoard = new ClassicBoard(2, out);
             }
             if (str.equals("1")) {
-                board = new Board(1,out);
+                classicBoard = new ClassicBoard(1, out);
             }
             startThread();
             BorderPane borderpane = new BorderPane();
             BorderPane.setAlignment(button, Pos.CENTER_RIGHT);
-            BorderPane.setMargin(button, new Insets(1,20,1,0));
+            BorderPane.setMargin(button, new Insets(1, 20, 1, 0));
             borderpane.setBottom(button);
-            borderpane.setCenter(board.getContent());
+            borderpane.setCenter(classicBoard.getContent());
             Scene scene1 = new Scene(borderpane);
             stage.setTitle("");
             stage.setResizable(false);
             stage.setScene(scene1);
 
-            
+
         });
 
-        b2.setOnAction( event -> {
+        b2.setOnAction(event -> {
             gameType = 2;
             stage.setScene(lookingForEnemy);
             listenSocket();
@@ -152,15 +147,15 @@ public class Player extends Application implements Runnable {
             }
             System.out.println(str);
             if (str.equals("2")) {
-                polishBoard = new PolishBoard(2,out);
+                polishBoard = new PolishBoard(2, out);
             }
             if (str.equals("1")) {
-                polishBoard = new PolishBoard(1,out);
+                polishBoard = new PolishBoard(1, out);
             }
             startThread();
             BorderPane borderpane = new BorderPane();
             BorderPane.setAlignment(button, Pos.CENTER_RIGHT);
-            BorderPane.setMargin(button, new Insets(1,20,1,0));
+            BorderPane.setMargin(button, new Insets(1, 20, 1, 0));
             borderpane.setBottom(button);
             borderpane.setCenter(polishBoard.getContent());
             Scene scene2 = new Scene(borderpane);
@@ -169,7 +164,7 @@ public class Player extends Application implements Runnable {
             stage.setScene(scene2);
         });
 
-        b3.setOnAction( event -> {
+        b3.setOnAction(event -> {
             gameType = 3;
             stage.setScene(lookingForEnemy);
             listenSocket();
@@ -181,15 +176,15 @@ public class Player extends Application implements Runnable {
             }
             System.out.println(str);
             if (str.equals("2")) {
-                russianBoard = new RussianBoard(2,out);
+                russianBoard = new RussianBoard(2, out);
             }
             if (str.equals("1")) {
-                russianBoard = new RussianBoard(1,out);
+                russianBoard = new RussianBoard(1, out);
             }
             startThread();
             BorderPane borderpane = new BorderPane();
             BorderPane.setAlignment(button, Pos.CENTER_RIGHT);
-            BorderPane.setMargin(button, new Insets(1,20,1,0));
+            BorderPane.setMargin(button, new Insets(1, 20, 1, 0));
             borderpane.setBottom(button);
             borderpane.setCenter(russianBoard.getContent());
             Scene scene3 = new Scene(borderpane);
@@ -242,20 +237,22 @@ public class Player extends Application implements Runnable {
                     try {
                         wait(10);
                     } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
 
                 receive();
-                if(gameType == 1)
-                    actualPlayer=board.turn;
-                if(gameType == 2)
-                    actualPlayer=polishBoard.turn;
-                if(gameType == 3)
-                    actualPlayer=russianBoard.turn;
+                if (gameType == 1)
+                    actualPlayer = classicBoard.turn;
+                if (gameType == 2)
+                    actualPlayer = polishBoard.turn;
+                if (gameType == 3)
+                    actualPlayer = russianBoard.turn;
                 notifyAll();
             }
         }
     }
+
     void f2() {
         while (true) {
             synchronized (this) {
@@ -263,19 +260,21 @@ public class Player extends Application implements Runnable {
                     try {
                         wait(10);
                     } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
                 receive();
-                if(gameType == 1)
-                    actualPlayer=board.turn;
-                if(gameType == 2)
-                    actualPlayer=polishBoard.turn;
-                if(gameType == 3)
-                    actualPlayer=russianBoard.turn;
+                if (gameType == 1)
+                    actualPlayer = classicBoard.turn;
+                if (gameType == 2)
+                    actualPlayer = polishBoard.turn;
+                if (gameType == 3)
+                    actualPlayer = russianBoard.turn;
                 notifyAll();
             }
         }
     }
+
     public void receive() {
         try {
             String str = in.readLine();
@@ -287,7 +286,7 @@ public class Player extends Application implements Runnable {
                 int x1 = translate(Character.getNumericValue(str.charAt(3)), 8);
                 int y1 = translate(Character.getNumericValue(str.charAt(4)), 8);
 
-                Platform.runLater(()->board.makeMove(x0, y0, x1, y1, false));
+                Platform.runLater(() -> classicBoard.makeMove(x0, y0, x1, y1, false));
             }
 
             if (str.charAt(0) == 'N' || str.charAt(0) == 'K') {
@@ -296,7 +295,7 @@ public class Player extends Application implements Runnable {
                 int x1 = translate(Character.getNumericValue(str.charAt(3)), 10);
                 int y1 = translate(Character.getNumericValue(str.charAt(4)), 10);
 
-                Platform.runLater(()->polishBoard.makeMove(x0, y0, x1, y1, false));
+                Platform.runLater(() -> polishBoard.makeMove(x0, y0, x1, y1, false));
             }
 
             if (str.charAt(0) == 'j' || str.charAt(0) == 'i') {
@@ -305,24 +304,22 @@ public class Player extends Application implements Runnable {
                 int x1 = translate(Character.getNumericValue(str.charAt(3)), 8);
                 int y1 = translate(Character.getNumericValue(str.charAt(4)), 8);
 
-                Platform.runLater(()->russianBoard.makeMove(x0, y0, x1, y1, false));
+                Platform.runLater(() -> russianBoard.makeMove(x0, y0, x1, y1, false));
             }
 
 
-
-            if (str.equals("REDWON")){
+            if (str.equals("REDWON")) {
                 System.out.println("czerwony wygral");
-                redWin = true;
             }
-            if (str.equals("WHITEWON")){
+            if (str.equals("WHITEWON")) {
                 System.out.println("bialy wygral");
-                whiteWin = true;
             }
         } catch (IOException e) {
             System.out.println("Read failed");
             System.exit(1);
         }
     }
+
     private int translate(int a, int height) {
         return height - a - 1;
     }
