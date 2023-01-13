@@ -25,9 +25,7 @@ public class Player extends Application implements Runnable {
     PrintWriter out = null;
     BufferedReader in = null;
 
-    private ClassicBoard classicBoard;
-    private PolishBoard polishBoard;
-    private RussianBoard russianBoard;
+    private Board board;
 
     private final PieceType player = PieceType.WHITE;
     public int gameType;
@@ -117,12 +115,12 @@ public class Player extends Application implements Runnable {
             }
             System.out.println(str);
             if (str.equals("2")) {
-                classicBoard = new ClassicBoard(2, out);
+                board = new ClassicBoard(2, out);
             }
             if (str.equals("1")) {
-                classicBoard = new ClassicBoard(1, out);
+                board = new ClassicBoard(1, out);
             }
-            startThread(stage, button, classicBoard.getContent());
+            startThread(stage, button, board.getContent());
 
 
         });
@@ -139,12 +137,12 @@ public class Player extends Application implements Runnable {
             }
             System.out.println(str);
             if (str.equals("2")) {
-                polishBoard = new PolishBoard(2, out);
+                board = new PolishBoard(2,out);
             }
             if (str.equals("1")) {
-                polishBoard = new PolishBoard(1, out);
+                board = new PolishBoard(1,out);
             }
-            startThread(stage, button, polishBoard.getContent());
+            startThread(stage, button, board.getContent());
         });
 
         b3.setOnAction(event -> {
@@ -159,12 +157,12 @@ public class Player extends Application implements Runnable {
             }
             System.out.println(str);
             if (str.equals("2")) {
-                russianBoard = new RussianBoard(2, out);
+                board = new RussianBoard(2, out);
             }
             if (str.equals("1")) {
-                russianBoard = new RussianBoard(1, out);
+                board = new RussianBoard(1, out);
             }
-            startThread(stage, button, russianBoard.getContent());
+            startThread(stage, button, board.getContent());
         });
 
 
@@ -229,12 +227,7 @@ public class Player extends Application implements Runnable {
                 }
 
                 receive();
-                if (gameType == 1)
-                    actualPlayer = classicBoard.turn;
-                if (gameType == 2)
-                    actualPlayer = polishBoard.turn;
-                if (gameType == 3)
-                    actualPlayer = russianBoard.turn;
+                actualPlayer=board.turn;
                 notifyAll();
             }
         }
@@ -251,12 +244,7 @@ public class Player extends Application implements Runnable {
                     }
                 }
                 receive();
-                if (gameType == 1)
-                    actualPlayer = classicBoard.turn;
-                if (gameType == 2)
-                    actualPlayer = polishBoard.turn;
-                if (gameType == 3)
-                    actualPlayer = russianBoard.turn;
+                actualPlayer=board.turn;
                 notifyAll();
             }
         }
@@ -268,55 +256,20 @@ public class Player extends Application implements Runnable {
             System.out.println(str);
 
             if (str.charAt(0) == 'n' || str.charAt(0) == 'k') {
-                int x0 = translate(Character.getNumericValue(str.charAt(1)), 8);
-                int y0 = translate(Character.getNumericValue(str.charAt(2)), 8);
-                int x1 = translate(Character.getNumericValue(str.charAt(3)), 8);
-                int y1 = translate(Character.getNumericValue(str.charAt(4)), 8);
+                int x0 = translate(Character.getNumericValue(str.charAt(1)), board.HEIGHT);
+                int y0 = translate(Character.getNumericValue(str.charAt(2)), board.HEIGHT);
+                int x1 = translate(Character.getNumericValue(str.charAt(3)), board.HEIGHT);
+                int y1 = translate(Character.getNumericValue(str.charAt(4)), board.HEIGHT);
 
-                Platform.runLater(() -> classicBoard.makeMove(x0, y0, x1, y1, false));
+                Platform.runLater(() -> board.makeMove(x0, y0, x1, y1, false));
             }
 
-            if (str.charAt(0) == 'N' || str.charAt(0) == 'K') {
-                int x0 = translate(Character.getNumericValue(str.charAt(1)), 10);
-                int y0 = translate(Character.getNumericValue(str.charAt(2)), 10);
-                int x1 = translate(Character.getNumericValue(str.charAt(3)), 10);
-                int y1 = translate(Character.getNumericValue(str.charAt(4)), 10);
-
-                Platform.runLater(() -> polishBoard.makeMove(x0, y0, x1, y1, false));
-            }
-
-            if (str.charAt(0) == 'j' || str.charAt(0) == 'i') {
-                int x0 = translate(Character.getNumericValue(str.charAt(1)), 8);
-                int y0 = translate(Character.getNumericValue(str.charAt(2)), 8);
-                int x1 = translate(Character.getNumericValue(str.charAt(3)), 8);
-                int y1 = translate(Character.getNumericValue(str.charAt(4)), 8);
-
-                Platform.runLater(() -> russianBoard.makeMove(x0, y0, x1, y1, false));
-            }
-
-
-            if (str.equals("REDWONB")) {
+            if (str.equals("REDWON")) {
                 System.out.println("czerwony wygral");
-                Platform.runLater(()->classicBoard.colorRed());
+                Platform.runLater(()->board.colorRed());
             }
-            if (str.equals("WHITEWONB")){
-                Platform.runLater(()->classicBoard.colorWhite());
-                System.out.println("bialy wygral");
-            }
-            if (str.equals("REDWONR")){
-                System.out.println("czerwony wygral");
-                Platform.runLater(()->russianBoard.colorRed());
-            }
-            if (str.equals("WHITEWONR")){
-                Platform.runLater(()->russianBoard.colorWhite());
-                System.out.println("bialy wygral");
-            }
-            if (str.equals("REDWONP")){
-                System.out.println("czerwony wygral");
-                Platform.runLater(()->polishBoard.colorRed());
-            }
-            if (str.equals("WHITEWONP")){
-                Platform.runLater(()->polishBoard.colorWhite());
+            if (str.equals("WHITEWON")){
+                Platform.runLater(()->board.colorWhite());
                 System.out.println("bialy wygral");
             }
         } catch (IOException e) {

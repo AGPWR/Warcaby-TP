@@ -480,14 +480,14 @@ abstract class Board{
         if(firstPlayerPieces == 0){
             //if(Player==1)
             PieceType p = (Player == 1) ? PieceType.WHITE : PieceType.RED;
-            send("REDWONB");
+            send("REDWON");
             redWon = true;
             send("t");
         }
         else
         if(secondPlayerPieces == 0){
             PieceType p = (Player == 1) ? PieceType.WHITE : PieceType.RED;
-            send("WHITEWONB");
+            send("WHITEWON");
             whiteWon = true;
             send("t");
         }
