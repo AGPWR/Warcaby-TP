@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
@@ -121,16 +122,7 @@ public class Player extends Application implements Runnable {
             if (str.equals("1")) {
                 classicBoard = new ClassicBoard(1, out);
             }
-            startThread();
-            BorderPane borderpane = new BorderPane();
-            BorderPane.setAlignment(button, Pos.CENTER_RIGHT);
-            BorderPane.setMargin(button, new Insets(1, 20, 1, 0));
-            borderpane.setBottom(button);
-            borderpane.setCenter(classicBoard.getContent());
-            Scene scene1 = new Scene(borderpane);
-            stage.setTitle("");
-            stage.setResizable(false);
-            stage.setScene(scene1);
+            startThread(stage, button, classicBoard.getContent());
 
 
         });
@@ -152,16 +144,7 @@ public class Player extends Application implements Runnable {
             if (str.equals("1")) {
                 polishBoard = new PolishBoard(1, out);
             }
-            startThread();
-            BorderPane borderpane = new BorderPane();
-            BorderPane.setAlignment(button, Pos.CENTER_RIGHT);
-            BorderPane.setMargin(button, new Insets(1, 20, 1, 0));
-            borderpane.setBottom(button);
-            borderpane.setCenter(polishBoard.getContent());
-            Scene scene2 = new Scene(borderpane);
-            stage.setTitle("");
-            stage.setResizable(false);
-            stage.setScene(scene2);
+            startThread(stage, button, polishBoard.getContent());
         });
 
         b3.setOnAction(event -> {
@@ -181,19 +164,23 @@ public class Player extends Application implements Runnable {
             if (str.equals("1")) {
                 russianBoard = new RussianBoard(1, out);
             }
-            startThread();
-            BorderPane borderpane = new BorderPane();
-            BorderPane.setAlignment(button, Pos.CENTER_RIGHT);
-            BorderPane.setMargin(button, new Insets(1, 20, 1, 0));
-            borderpane.setBottom(button);
-            borderpane.setCenter(russianBoard.getContent());
-            Scene scene3 = new Scene(borderpane);
-            stage.setTitle("");
-            stage.setResizable(false);
-            stage.setScene(scene3);
+            startThread(stage, button, russianBoard.getContent());
         });
 
 
+    }
+
+    private void startThread(Stage stage, Button button, Parent content) {
+        startThread();
+        BorderPane borderpane = new BorderPane();
+        BorderPane.setAlignment(button, Pos.CENTER_RIGHT);
+        BorderPane.setMargin(button, new Insets(1, 20, 1, 0));
+        borderpane.setBottom(button);
+        borderpane.setCenter(content);
+        Scene scene2 = new Scene(borderpane);
+        stage.setTitle("");
+        stage.setResizable(false);
+        stage.setScene(scene2);
     }
 
     public static void main(String[] args) {
@@ -308,10 +295,28 @@ public class Player extends Application implements Runnable {
             }
 
 
-            if (str.equals("REDWON")) {
+            if (str.equals("REDWONB")) {
                 System.out.println("czerwony wygral");
+                Platform.runLater(()->classicBoard.colorRed());
             }
-            if (str.equals("WHITEWON")) {
+            if (str.equals("WHITEWONB")){
+                Platform.runLater(()->classicBoard.colorWhite());
+                System.out.println("bialy wygral");
+            }
+            if (str.equals("REDWONR")){
+                System.out.println("czerwony wygral");
+                Platform.runLater(()->russianBoard.colorRed());
+            }
+            if (str.equals("WHITEWONR")){
+                Platform.runLater(()->russianBoard.colorWhite());
+                System.out.println("bialy wygral");
+            }
+            if (str.equals("REDWONP")){
+                System.out.println("czerwony wygral");
+                Platform.runLater(()->polishBoard.colorRed());
+            }
+            if (str.equals("WHITEWONP")){
+                Platform.runLater(()->polishBoard.colorWhite());
                 System.out.println("bialy wygral");
             }
         } catch (IOException e) {
