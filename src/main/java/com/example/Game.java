@@ -20,6 +20,7 @@ public class Game implements Runnable {
   @Override
   public void run() {
     try {
+      turn = FIRST;
       System.out.println("game starts");
       InputStream inputF = firstPlayer.getInputStream();
       BufferedReader inF = new BufferedReader(new InputStreamReader(inputF));
@@ -37,7 +38,8 @@ public class Game implements Runnable {
       outS.println("2");
 
       String line;
-      boolean x=false;
+      boolean x = false;
+
       do {
         if (turn == SECOND) {
           line = inS.readLine();
@@ -46,9 +48,10 @@ public class Game implements Runnable {
           if (line.equals("end")) {
             System.out.println(line);
             outF.println(line);
-            if(x)
+            if (x) {
               break;
-            x=true;
+            }
+            x = true;
           }
           if (line.equals("t")) {
             turn = FIRST;
@@ -62,9 +65,10 @@ public class Game implements Runnable {
           if (line.equals("end")) {
             System.out.println(line);
             outS.println(line);
-            if(x)
+            if (x) {
               break;
-            x=true;
+            }
+            x = true;
           }
           if (line.equals("t")) {
             turn = SECOND;

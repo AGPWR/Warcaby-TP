@@ -31,31 +31,21 @@ public class Player extends Application implements Runnable {
   Socket socket = null;
   PrintWriter out = null;
   BufferedReader in = null;
-
+  int player;
   private Board board;
-  boolean game=true;
-  private final PieceType player = PieceType.WHITE;
+  boolean game = true;
   public int gameType;
+  //public int turn;
 
-  public final static PieceType PLAYER1 = PieceType.WHITE;
-  public final static PieceType PLAYER2 = PieceType.RED;
-
-  private static PieceType actualPlayer = PLAYER1;
 
   @Override
   public void run() {
-
-    if (player == PLAYER1) {
-      f1();
-    } else {
-      f2();
-    }
-
+    f();
   }
 
   @Override
   public void start(Stage stage) {
-    this.stage=stage;
+    this.stage = stage;
     Button b1 = new Button("Klasyczne");
     Button b2 = new Button("Polskie");
     Button b3 = new Button("Rosyjskie");
@@ -120,7 +110,7 @@ public class Player extends Application implements Runnable {
 
     b1.setOnAction(event -> {
       gameType = 1;
-      game=true;
+      game = true;
       stage.setScene(lookingForEnemy);
       stage.show();
 
@@ -133,9 +123,11 @@ public class Player extends Application implements Runnable {
       }
       System.out.println(str);
       if (str != null && str.equals("2")) {
+        player = 2;
         board = new ClassicBoard(2, out);
       }
       if (str != null && str.equals("1")) {
+        player = 1;
         board = new ClassicBoard(1, out);
       }
       startThread(board.getContent());
@@ -145,7 +137,7 @@ public class Player extends Application implements Runnable {
 
     b2.setOnAction(event -> {
       gameType = 2;
-      game=true;
+      game = true;
       stage.setScene(lookingForEnemy);
       listenSocket();
       String str = null;
@@ -156,6 +148,7 @@ public class Player extends Application implements Runnable {
       }
       System.out.println(str);
       if (str != null && str.equals("2")) {
+
         board = new PolishBoard(2, out);
       }
       if (str != null && str.equals("1")) {
@@ -166,7 +159,7 @@ public class Player extends Application implements Runnable {
 
     b3.setOnAction(event -> {
       gameType = 3;
-      game=true;
+      game = true;
       stage.setScene(lookingForEnemy);
       listenSocket();
       String str = null;
@@ -235,44 +228,22 @@ public class Player extends Application implements Runnable {
     gTh.start();
   }
 
-  void f1() {
+  void f() {
     System.out.println("Thread 1 start");
     while (game) {
       synchronized (this) {
-        if (actualPlayer == PLAYER1) {
-          try {
-            wait(10);
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
+        try {
+          wait(10);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
         }
 
+
         receive();
-        actualPlayer = board.turn;
         notifyAll();
       }
     }
     System.out.println("Thread 1 end");
-  }
-
-  void f2() {
-    System.out.println("Thread 2 start");
-    while (game) {
-
-      synchronized (this) {
-        if (actualPlayer == PLAYER2) {
-          try {
-            wait(10);
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
-        }
-        receive();
-        actualPlayer = board.turn;
-        notifyAll();
-      }
-    }
-    System.out.println("Thread 2 end");
   }
 
   /**
@@ -294,18 +265,21 @@ public class Player extends Application implements Runnable {
 
       if (str.equals("REDWON")) {
         System.out.println("czerwony wygral");
-        Platform.runLater(()->endMenu("czerwony wygral"));
-        game=false;
+        Platform.runLater(() -> endMenu("czerwony wygral"));
       }
       if (str.equals("WHITEWON")) {
         System.out.println("bialy wygral");
-        Platform.runLater(()->endMenu("bialy wygral"));
-        game=false;
+        Platform.runLater(() -> endMenu("bialy wygral"));
       }
-      if(str.equals("end")){
+      if (str.equals("end")) {
         out.println("end");
-        out.println("t");
-        game=false;
+
+
+        game = false;
+        socket.close();
+        if (socket.isClosed()) {
+          System.out.println("zamknieto socket");
+        }
       }
     } catch (IOException e) {
       System.out.println("Read failed");
@@ -317,18 +291,18 @@ public class Player extends Application implements Runnable {
     return height - a - 1;
   }
 
-  private void endMenu(String message){
+  private void endMenu(String message) {
     Text winner = new Text(message);
     winner.setStyle("-fx-font: 50 arial;");
     BorderPane borderpane = new BorderPane();
-    borderpane.setPrefSize(499,499);
+    borderpane.setPrefSize(499, 499);
     borderpane.setBackground(
         new Background(new BackgroundFill(Color.GREENYELLOW, new CornerRadii(0), Insets.EMPTY)));
     BorderPane.setAlignment(button, Pos.CENTER_RIGHT);
     BorderPane.setMargin(button, new Insets(1, 20, 1, 0));
     borderpane.setBottom(button);
     borderpane.setCenter(winner);
-    Scene scene= new Scene(borderpane);
+    Scene scene = new Scene(borderpane);
     stage.setScene(scene);
   }
 
