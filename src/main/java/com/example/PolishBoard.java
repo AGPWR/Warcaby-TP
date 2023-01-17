@@ -17,7 +17,4 @@ public class PolishBoard extends Board {
       }
 
   }
-
-
-
 }

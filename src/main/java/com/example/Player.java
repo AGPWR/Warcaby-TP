@@ -33,10 +33,10 @@ public class Player extends Application implements Runnable {
   BufferedReader in = null;
   int player;
   private Board board;
-  private ConcreteBoardFactory cbf = new ConcreteBoardFactory();
+  private final ConcreteBoardFactory cbf = new ConcreteBoardFactory();
   boolean game = true;
-  public int gameType;
-  //public int turn;
+  // public int gameType;
+  // public int turn;
 
 
   @Override
@@ -110,7 +110,7 @@ public class Player extends Application implements Runnable {
     });
 
     b1.setOnAction(event -> {
-      gameType = 1;
+      //gameType = 1;
       game = true;
       stage.setScene(lookingForEnemy);
       stage.show();
@@ -137,7 +137,7 @@ public class Player extends Application implements Runnable {
     });
 
     b2.setOnAction(event -> {
-      gameType = 2;
+      //gameType = 2;
       game = true;
       stage.setScene(lookingForEnemy);
       listenSocket();
@@ -159,7 +159,7 @@ public class Player extends Application implements Runnable {
     });
 
     b3.setOnAction(event -> {
-      gameType = 3;
+      //gameType = 3;
       game = true;
       stage.setScene(lookingForEnemy);
       listenSocket();

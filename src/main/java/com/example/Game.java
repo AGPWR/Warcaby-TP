@@ -5,12 +5,11 @@ import java.net.Socket;
 
 public class Game implements Runnable {
 
-  private Socket firstPlayer;
-  private Socket secondPlayer;
+  private final Socket firstPlayer;
+  private final Socket secondPlayer;
 
   private final static int FIRST = 1;
   private final static int SECOND = 2;
-  private static int turn = FIRST;
 
   public Game(Socket firstPlayer, Socket secondPlayer) {
     this.firstPlayer = firstPlayer;
@@ -20,7 +19,7 @@ public class Game implements Runnable {
   @Override
   public void run() {
     try {
-      turn = FIRST;
+      int turn = FIRST;
       System.out.println("game starts");
       InputStream inputF = firstPlayer.getInputStream();
       BufferedReader inF = new BufferedReader(new InputStreamReader(inputF));
