@@ -33,6 +33,7 @@ public class Player extends Application implements Runnable {
   BufferedReader in = null;
   int player;
   private Board board;
+  private ConcreteBoardFactory cbf = new ConcreteBoardFactory();
   boolean game = true;
   public int gameType;
   //public int turn;
@@ -124,11 +125,11 @@ public class Player extends Application implements Runnable {
       System.out.println(str);
       if (str != null && str.equals("2")) {
         player = 2;
-        board = new ClassicBoard(2, out);
+        board = cbf.getBoard("CLASSIC", 2, out);
       }
       if (str != null && str.equals("1")) {
         player = 1;
-        board = new ClassicBoard(1, out);
+        board = cbf.getBoard("CLASSIC", 1, out);
       }
       startThread(board.getContent());
 
@@ -149,10 +150,10 @@ public class Player extends Application implements Runnable {
       System.out.println(str);
       if (str != null && str.equals("2")) {
 
-        board = new PolishBoard(2, out);
+        board = cbf.getBoard("POLISH", 2, out);
       }
       if (str != null && str.equals("1")) {
-        board = new PolishBoard(1, out);
+        board = cbf.getBoard("POLISH", 1, out);
       }
       startThread(board.getContent());
     });
@@ -170,10 +171,10 @@ public class Player extends Application implements Runnable {
       }
       System.out.println(str);
       if (str != null && str.equals("2")) {
-        board = new RussianBoard(2, out);
+        board = cbf.getBoard("RUSSIAN", 2, out);
       }
       if (str != null && str.equals("1")) {
-        board = new RussianBoard(1, out);
+        board = cbf.getBoard("RUSSIAN", 1, out);
       }
       startThread(board.getContent());
     });
