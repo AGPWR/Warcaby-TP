@@ -6,6 +6,9 @@ import java.io.PrintWriter;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Klasa testujaca poprawnosc metoda klasy ConcreteBoardFactory.
+ */
 class ConcreteBoardFactoryTest {
 
     @Test

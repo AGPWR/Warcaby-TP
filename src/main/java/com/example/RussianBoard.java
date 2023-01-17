@@ -2,8 +2,15 @@ package com.example;
 
 import java.io.PrintWriter;
 
+/**
+ * Klasa trybu rosyjskiego warcab.
+ */
 public class RussianBoard extends Board {
-
+  /**
+   * Konstruktor planszy trybu rosyjskiego.
+   * @param Player gracz
+   * @param out strumien wyjsciowy
+   */
   public RussianBoard(int Player, PrintWriter out) {
     super(8, 8);
     this.Player = Player;
@@ -15,6 +22,13 @@ public class RussianBoard extends Board {
       }
   }
 
+  /**
+   * Metoda zwracajaca typ ruchu dla rosyjskiego wariantu warcab.
+   * @param piece ruszany pionek
+   * @param newX nowa wspolrzedna x ruszanego pionka
+   * @param newY nowa wspolrzedna y ruszanego pionka
+   * @return typ ruchu
+   */
   public MoveResult tryMove(Piece piece, int newX, int newY) {
       if (newX < 0 || newX >= HEIGHT || newY < 0 || newY >= HEIGHT) {
           return new MoveResult(MoveType.NONE);
@@ -53,6 +67,14 @@ public class RussianBoard extends Board {
     return new MoveResult(MoveType.NONE);
   }
 
+  /**
+   * Metoda przesuwajaca pionki dla rosyjskiego wariantu warcab.
+   * @param x0 stara wspolrzedna x
+   * @param y0 stara wspolrzedna y
+   * @param newX nowa wspolrzedna x
+   * @param newY nowa wspolrzedna x
+   * @param send wyslanie ruchu do serwera
+   */
   public void makeMove(int x0, int y0, int newX, int newY, boolean send) {
     Piece piece = board[x0][y0].getPiece();
     MoveResult result = tryMove(piece, newX, newY);

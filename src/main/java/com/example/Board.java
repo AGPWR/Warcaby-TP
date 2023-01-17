@@ -5,39 +5,89 @@ import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 
+/**
+ * Abstrakcyjna klasa implementujaca plansze do gry z podstawowymi zasadami.
+ */
 abstract class Board {
-
+  /**
+   * Pole przechowujace kto ma aktualny ruch.
+   */
   public PieceType turn = PieceType.WHITE;
+  /**
+   * Szerokosc planszy.
+   */
   protected int WIDTH;
+  /**
+   * Wysokosc planszy.
+   */
   protected int HEIGHT;
+  /**
+   * Tablica skladająca się z pól planszy.
+   */
   protected Tile[][] board;
-
+  /**
+   * Cała plansza z pionkami.
+   */
   protected Parent content;
-
+  /**
+   * Pole przechowujace czy czerwony wygral.
+   */
   public boolean redWon = false;
+  /**
+   * Pole przechowujace czy bialy wygral.
+   */
   public boolean whiteWon = false;
-  public boolean draw = false;
-
-
+  /**
+   * Strumien wyjsciowy do serwera.
+   */
   protected PrintWriter out;
-
+  /**
+   * Pole zawierające ostatni kierunek poruszania sie damy.
+   */
   protected int LastQDirection = 0;
+  /**
+   * Gracz.
+   */
   public int Player;
+  /**
+   * Stala wielkosc pola w pikselach.
+   */
   protected final static int TILE_SIZE = 75;
 
-
+  /**
+   * Konstruktor planszy.
+   * @param width wysokosc
+   * @param height szerokosc
+   */
   protected Board(int width, int height) {
     this.WIDTH = width;
     this.HEIGHT = height;
     this.board = new Tile[this.WIDTH][this.HEIGHT];
   }
 
+  /**
+   * Ilosc pionkow pierszego gracza.
+   */
   protected int firstPlayerPieces = 0;
+  /**
+   * Ilosc pionkow drugiego gracza.
+   */
   protected int secondPlayerPieces = 0;
+  /**
+   * Grupa pól.
+   */
   protected final Group tileGroup = new Group();
+  /**
+   * Grupa pionkow.
+   */
   protected final Group pieceGroup = new Group();
 
-
+  /**
+   * Metoda tworzaca plansze z pionkami.
+   * @param player1 typ pionkow pierwszego gracza
+   * @param player2 typ pionkow drugiego gracza
+   * @return plansza startowa
+   */
   protected Parent createContent(PieceType player1, PieceType player2) {
     Pane root = new Pane();
     root.setPrefSize(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE);
@@ -68,6 +118,13 @@ abstract class Board {
     return root;
   }
 
+  /**
+   * Metoda tworzaca pionka na danym polu.
+   * @param type typ pionka
+   * @param x wspolrzedna x pola
+   * @param y wspolrzedna y pola
+   * @return nowy pionek
+   */
   protected Piece makePiece(PieceType type, int x, int y) {
     PieceType p = (Player == 1) ? PieceType.WHITE : PieceType.RED;
 
@@ -84,6 +141,14 @@ abstract class Board {
     return piece;
   }
 
+  /**
+   * Metoda przesuwajaca pionki.
+   * @param x0 stara wspolrzedna x
+   * @param y0 stara wspolrzedna y
+   * @param newX nowa wspolrzedna x
+   * @param newY nowa wspolrzedna x
+   * @param send wyslanie ruchu do serwera
+   */
   public void makeMove(int x0, int y0, int newX, int newY, boolean send) {
     Piece piece = board[x0][y0].getPiece();
     MoveResult result = tryMove(piece, newX, newY);
@@ -149,19 +214,38 @@ abstract class Board {
     }
   }
 
+  /**
+   * Metoda wysylajaca informacje do serwera.
+   * @param message informacja
+   */
   public void send(String message) {
     out.println(message);
   }
 
+  /**
+   * Metoda skalujaca piksel do planszy.
+   * @param pixel piskel
+   * @return przesklowany piksel
+   */
   protected int toBoard(double pixel) {
     return (int) (pixel + TILE_SIZE / 2) / TILE_SIZE;
   }
 
+  /**
+   * Metoda zwracajaca aktualna plansze.
+   * @return plansza
+   */
   public Parent getContent() {
     return this.content;
   }
 
-
+  /**
+   * Metoda zwracajaca typ ruchu.
+   * @param piece ruszany pionek
+   * @param newX nowa wspolrzedna x ruszanego pionka
+   * @param newY nowa wspolrzedna y ruszanego pionka
+   * @return typ ruchu (NONE, NORMAL, KILL)
+   */
   protected MoveResult tryMove(Piece piece, int newX, int newY) {
     if (newX < 0 || newX >= HEIGHT || newY < 0 || newY >= HEIGHT) {
       return new MoveResult(MoveType.NONE);
@@ -204,11 +288,28 @@ abstract class Board {
     return new MoveResult(MoveType.NONE);
   }
 
+  /**
+   * Metoda zwracajaca czy dama moze sie ruszyc.
+   * @param x stara wspolrzedna x damy
+   * @param y stara wspolrzedna y damy
+   * @param newX nowa wspolrzedna x damy
+   * @param newY nowa wspolrzedna y damy
+   * @return true or false
+   */
   protected Boolean canQueenMove(int x, int y, int newX, int newY) {
     return !isInPlus(x, y, newX, newY) && isInCross(x, y, newX, newY) &&
         countPiecesInDiagonal(x, y, newX, newY, board) == 0 && !board[newX][newY].hasPiece();
   }
 
+  /**
+   * Metoda zwracajaca czy dama moze bic.
+   * @param x stara wspolrzedna x damy
+   * @param y stara wspolrzedna y damy
+   * @param newX nowa wspolrzedna x damy
+   * @param newY nowa wspolrzedna y damy
+   * @param board plansza
+   * @return true or false
+   */
   protected Boolean canQueenKill(int x, int y, int newX, int newY, Tile[][] board) {
     Piece piece = board[x][y].getPiece();
     if (!isInPlus(x, y, newX, newY) && isInCross(x, y, newX, newY) &&
@@ -221,10 +322,25 @@ abstract class Board {
     return false;
   }
 
+  /**
+   * Metoda sprawdza czy ktoras ze wspolrzednych jest taka sama.
+   * @param x0 pierwsza wspolrzedna x
+   * @param y0 pierwsza wspolrzedna y
+   * @param x1 druga wspolrzedna x
+   * @param y1 druga wspolrzedna y
+   * @return true or false
+   */
   protected Boolean isInPlus(int x0, int y0, int x1, int y1) {
     return x0 == x1 || y0 == y1;
   }
-
+  /**
+   * Metoda sprawdza czy suma poszczegolnych wspolrzednych jest taka sama.
+   * @param x0 pierwsza wspolrzedna x
+   * @param y0 pierwsza wspolrzedna y
+   * @param x1 druga wspolrzedna x
+   * @param y1 druga wspolrzedna y
+   * @return true or false
+   */
   protected Boolean isInCross(int x0, int y0, int x1, int y1) {
     if (Math.abs(x0 - y0) == Math.abs(x1 - y1)) {
       return true;
@@ -232,6 +348,15 @@ abstract class Board {
     return x0 + y0 == x1 + y1;
   }
 
+  /**
+   * Metoda szukajca wspolrzednych pionka.
+   * @param x0 pierwsza wspolrzedna x
+   * @param y0 pierwsza wspolrzedna y
+   * @param x1 druga wspolrzedna x
+   * @param y1 druga wspolrzedna y
+   * @param board plansza
+   * @return wspolrzedne
+   */
   protected int[] findPiece(int x0, int y0, int x1, int y1, Tile[][] board) {
     int[] coordinates = new int[2];
 
@@ -256,6 +381,15 @@ abstract class Board {
     return coordinates;
   }
 
+  /**
+   * Metoda liczy pionki w skosie.
+   * @param x0 pierwsza wspolrzedna x
+   * @param y0 pierwsza wspolrzedna y
+   * @param x1 druga wspolrzedna x
+   * @param y1 druga wspolrzedna y
+   * @param board plansza
+   * @return ilosc pionkow w skosie
+   */
   protected int countPiecesInDiagonal(int x0, int y0, int x1, int y1, Tile[][] board) {
     int count = 0;
 
@@ -279,6 +413,11 @@ abstract class Board {
     return count;
   }
 
+  /**
+   * Metoda sprawdzajaca czy bicie jest wymuszone.
+   * @param player gracz
+   * @return true or false
+   */
   protected boolean isForcedKill(PieceType player) {
     for (int y = 0; y < HEIGHT; y++) {
       for (int x = 0; x < WIDTH; x++) {
@@ -292,6 +431,15 @@ abstract class Board {
     return false;
   }
 
+  /**
+   * Metoda sprawdza czy pionek moze bic.
+   * @param x wspolrzedna x pionka
+   * @param y wspolrzedna y pionka
+   * @param piece pionek
+   * @param board plansza
+   * @param lastQDirection ostatni kierunek chodzenia damy
+   * @return true or false
+   */
   protected boolean canPieceKill(int x, int y, Piece piece, Tile[][] board, int lastQDirection) {
     PieceType type = piece.getType();
     int[][] directions = {{-1, 1}, {-1, -1}, {1, 1}, {1, -1}};
@@ -332,6 +480,14 @@ abstract class Board {
     return false;
   }
 
+  /**
+   * Pobiera ilosc najdluzszego bicia pionka.
+   * @param x wspolrzedna x pionka
+   * @param y wspolrzedna y pionka
+   * @param board plansza
+   * @param lastQDirection ostatni kierunek chodzenia damy
+   * @return ilosc najdluzszego bicia pionka
+   */
   protected int getLongestPawnKill(int x, int y, Tile[][] board, int lastQDirection) {
     int road1 = 0;
     int road2 = 0;
@@ -424,6 +580,10 @@ abstract class Board {
     return Math.max(Math.max(road1, road2), Math.max(road3, road4));
   }
 
+  /**
+   * Metoda zwracajaca ilosc bic najdluzeszego ruchu.
+   * @return ilosc bic najdluzeszego ruchu
+   */
   protected int getLongestPossibleKill() {
     int count = 0;
     for (int y = 0; y < HEIGHT; y++) {
@@ -438,6 +598,14 @@ abstract class Board {
     return count;
   }
 
+  /**
+   * Meotda sprawdzajaca czy to najdluzsze mozliwe biecie
+   * @param x0 pierwsza wspolrzedna x
+   * @param y0 pierwsza wspolrzedna y
+   * @param x1 druga wspolrzedna x
+   * @param y1 druga wspolrzedna y
+   * @return true of false
+   */
   protected boolean isThisLongestKill(int x, int y, int x1, int y1) {
     Tile[][] clone = makeBoardClone(board);
     int[] p = findPiece(x, y, x1, y1, board);
@@ -448,7 +616,11 @@ abstract class Board {
         (getLongestPawnKill(x1, y1, clone, getDirection(x, y, x1, y1)) + 1);
   }
 
-
+  /**
+   * Metoda klonuje plansze.
+   * @param board plansza
+   * @return kopia planszy
+   */
   protected Tile[][] makeBoardClone(Tile[][] board) {
     Tile[][] boardClone = new Tile[HEIGHT][WIDTH];
     for (int y = 0; y < HEIGHT; y++) {
@@ -468,6 +640,14 @@ abstract class Board {
     return boardClone;
   }
 
+  /**
+   * Metoda pobierajaca kierunek poruszania sie damy.
+   * @param x pierwsza wspolrzedna x
+   * @param y pierwsza wspolrzedna y
+   * @param x1 druga wspolrzedna x
+   * @param y1 druga wspolrzedna y
+   * @return kierunek poruszanie sie damy
+   */
   protected int getDirection(int x, int y, int x1, int y1) {
     int xClone = x;
     int yClone = y;
@@ -488,6 +668,9 @@ abstract class Board {
     return 0;
   }
 
+  /**
+   * Metoda sprawdzajaca czy to koniec gry.
+   */
   public void checkIfEnd() {
     if (!canPlayerMove(1)) {
       firstPlayerPieces = 0;
@@ -524,6 +707,11 @@ abstract class Board {
 
   }
 
+  /**
+   * Metoda sprawdzajaca czy gracz moze sie ruszyc.
+   * @param Player gracz
+   * @return true or false
+   */
   private boolean canPlayerMove(int Player) {
     PieceType p = (Player == 1) ? PieceType.WHITE : PieceType.RED;
     if (p != turn) {

@@ -1,10 +1,12 @@
 package com.example;
 
-import javafx.scene.Parent;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Klasa testujaca poprawnosc metoda klasy Board.
+ */
 class BoardTest {
 
     @Test

@@ -25,20 +25,48 @@ import java.net.UnknownHostException;
  *
  */
 public class Player extends Application implements Runnable {
-
+  /**
+   * Scena gry.
+   */
   Stage stage;
+  /**
+   * Przycisk.
+   */
   Button button;
+  /**
+   * Socket gracza.
+   */
   Socket socket = null;
+  /**
+   * Strumien wyjsciowy.
+   */
   PrintWriter out = null;
+  /**
+   * Strumien wejsciowy.
+   */
   BufferedReader in = null;
+  /**
+   * Numer gracza.
+   */
   int player;
+  /**
+   * Plasza.
+   */
   private Board board;
+  /**
+   * Fabryka planszy.
+   */
   private final ConcreteBoardFactory cbf = new ConcreteBoardFactory();
+  /**
+   * Czy gra trwa.
+   */
   boolean game = true;
   // public int gameType;
   // public int turn;
 
-
+  /**
+   *
+   */
   @Override
   public void run() {
     f();
@@ -195,6 +223,10 @@ public class Player extends Application implements Runnable {
     stage.setScene(scene2);
   }
 
+  /**
+   * Glowna metoda.
+   * @param args arguementy
+   */
   public static void main(String[] args) {
     Application.launch(args);
   }

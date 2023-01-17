@@ -2,8 +2,15 @@ package com.example;
 
 import java.io.PrintWriter;
 
+/**
+ * Klasa klasycznej planszy warcab.
+ */
 public class ClassicBoard extends Board {
-
+  /**
+   * Konstruktor klasycznej planszy warcab.
+   * @param Player gracz
+   * @param out stumien wyjsciowy
+   */
   public ClassicBoard(int Player, PrintWriter out) {
     super(8, 8);
     this.Player = Player;

@@ -4,7 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+/**
+ * Klasa testujaca poprawnosc metoda klasy Tile.
+ */
 class TileTest {
 
     @Test

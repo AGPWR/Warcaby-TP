@@ -3,19 +3,40 @@ package com.example;
 import java.io.*;
 import java.net.Socket;
 
+/**
+ * Klasa tworzaca gre.
+ */
 public class Game implements Runnable {
-
+  /**
+   * Socket pierwszego gracza.
+   */
   private final Socket firstPlayer;
+  /**
+   * Socket drugiego gracza.
+   */
   private final Socket secondPlayer;
-
+  /**
+   * Statyczne pole first.
+   */
   private final static int FIRST = 1;
+  /**
+   * Statyczne pole second.
+   */
   private final static int SECOND = 2;
 
+  /**
+   * Konstruktor gry
+   * @param firstPlayer gracz 1
+   * @param secondPlayer gracz 2
+   */
   public Game(Socket firstPlayer, Socket secondPlayer) {
     this.firstPlayer = firstPlayer;
     this.secondPlayer = secondPlayer;
   }
 
+  /**
+   * Metoda startujaca gre.
+   */
   @Override
   public void run() {
     try {

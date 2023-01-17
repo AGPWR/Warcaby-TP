@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 import static com.example.Board.TILE_SIZE;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Klasa testujaca poprawnosc metoda klasy Piece.
+ */
 class PieceTest {
 
     @Test
