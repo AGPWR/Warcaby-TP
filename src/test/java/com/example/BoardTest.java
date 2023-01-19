@@ -1,5 +1,7 @@
 package com.example;
 
+import javafx.scene.Parent;
+import javafx.scene.layout.Pane;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,6 +55,53 @@ class BoardTest {
 
     @Test
     void tryMove() {
+         class Test extends Board{
+             protected Test() {
+                 super(8, 8);
+                 this.Player=1;
+                 this.content = createContent(PieceType.RED, PieceType.WHITE);
+             }
+
+             @Override
+             protected Parent createContent(PieceType player1, PieceType player2) {
+                 Pane root = new Pane();
+                 root.setPrefSize(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE);
+                 root.getChildren().addAll(tileGroup, pieceGroup);
+                 for (int y = 0; y < HEIGHT; y++) {
+                     for (int x = 0; x < WIDTH; x++) {
+                         Tile tile = new Tile((x + y) % 2 == 0, x, y);
+                         board[x][y] = tile;
+                         tileGroup.getChildren().add(tile);
+                         Piece piece = null;
+
+                         if ((x==6 && y==3) || (x==4 && y==3)) {
+                             piece = makePiece(player1, x, y);
+                             firstPlayerPieces++;
+                         }
+                        if (x==7 && y==4){
+                            piece = makePiece(player2, x, y);
+                            secondPlayerPieces++;
+                        }
+
+                         if (piece != null) {
+                             tile.setPiece(piece);
+                             pieceGroup.getChildren().add(piece);
+                         }
+                     }
+                 }
+                 return root;
+             }
+
+             @Override
+             public MoveResult tryMove(Piece piece, int newX, int newY) {
+                 return super.tryMove(piece, newX, newY);
+             }
+
+         }
+        Test test=new Test();
+         Tile[][] board= test.board;
+        assert(test.tryMove(board[7][4].getPiece(),6,3).type==MoveType.NONE);
+        assert(test.tryMove(board[7][4].getPiece(),5,2).type==MoveType.KILL);
     }
 
     @Test
