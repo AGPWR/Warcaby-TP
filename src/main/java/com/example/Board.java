@@ -712,7 +712,7 @@ abstract class Board {
    * @param Player gracz
    * @return true or false
    */
-  private boolean canPlayerMove(int Player) {
+  protected boolean canPlayerMove(int Player) {
     PieceType p = (Player == 1) ? PieceType.WHITE : PieceType.RED;
     if (p != turn) {
       return true;
