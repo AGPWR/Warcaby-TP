@@ -154,5 +154,11 @@ class BoardTest {
         //Bez wywolania metody checkIfEnd()
         test =new Test2(false);
         assert (!test.redWon);
+
+        //Sprawdzenie braku ruchu dla damy
+        Test3 test3 =new Test3();
+        test3.checkIfEnd();
+        assert (test3.redWon);
+
     }
 }

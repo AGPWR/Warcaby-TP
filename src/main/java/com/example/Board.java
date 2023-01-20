@@ -722,7 +722,6 @@ abstract class Board {
 
         if (board[x][y].hasPiece() && board[x][y].getPiece().getType() == p) {
           Piece piece = board[x][y].getPiece();
-          if (!piece.isQueen()) {
             int i = 0;
             if (tryMove(piece, x + 1, y + 1).type == MoveType.NONE) {
               i++;
@@ -751,9 +750,7 @@ abstract class Board {
             if (i != 8) {
               return true;
             }
-          } else {
-            return true;
-          }
+
         }
       }
     }
