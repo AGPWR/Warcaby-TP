@@ -56,7 +56,8 @@ abstract class Board {
 
   /**
    * Konstruktor planszy.
-   * @param width wysokosc
+   *
+   * @param width  wysokosc
    * @param height szerokosc
    */
   protected Board(int width, int height) {
@@ -84,6 +85,7 @@ abstract class Board {
 
   /**
    * Metoda tworzaca plansze z pionkami.
+   *
    * @param player1 typ pionkow pierwszego gracza
    * @param player2 typ pionkow drugiego gracza
    * @return plansza startowa
@@ -99,12 +101,12 @@ abstract class Board {
         tileGroup.getChildren().add(tile);
 
         Piece piece = null;
-        if (y <= (HEIGHT-2)/2 -1 && (x + y) % 2 != 0) {
+        if (y <= (HEIGHT - 2) / 2 - 1 && (x + y) % 2 != 0) {
           player1.moveDir = 1;
           piece = makePiece(player1, x, y);
           firstPlayerPieces++;
         }
-        if (y >= (HEIGHT+2)/2  && (x + y) % 2 != 0) {
+        if (y >= (HEIGHT + 2) / 2 && (x + y) % 2 != 0) {
           player2.moveDir = -1;
           piece = makePiece(player2, x, y);
           secondPlayerPieces++;
@@ -120,9 +122,10 @@ abstract class Board {
 
   /**
    * Metoda tworzaca pionka na danym polu.
+   *
    * @param type typ pionka
-   * @param x wspolrzedna x pola
-   * @param y wspolrzedna y pola
+   * @param x    wspolrzedna x pola
+   * @param y    wspolrzedna y pola
    * @return nowy pionek
    */
   protected Piece makePiece(PieceType type, int x, int y) {
@@ -143,8 +146,9 @@ abstract class Board {
 
   /**
    * Metoda przesuwajaca pionki.
-   * @param x0 stara wspolrzedna x
-   * @param y0 stara wspolrzedna y
+   *
+   * @param x0   stara wspolrzedna x
+   * @param y0   stara wspolrzedna y
    * @param newX nowa wspolrzedna x
    * @param newY nowa wspolrzedna x
    * @param send wyslanie ruchu do serwera
@@ -216,6 +220,7 @@ abstract class Board {
 
   /**
    * Metoda wysylajaca informacje do serwera.
+   *
    * @param message informacja
    */
   public void send(String message) {
@@ -224,6 +229,7 @@ abstract class Board {
 
   /**
    * Metoda skalujaca piksel do planszy.
+   *
    * @param pixel piskel
    * @return przesklowany piksel
    */
@@ -233,6 +239,7 @@ abstract class Board {
 
   /**
    * Metoda zwracajaca aktualna plansze.
+   *
    * @return plansza
    */
   public Parent getContent() {
@@ -241,9 +248,10 @@ abstract class Board {
 
   /**
    * Metoda zwracajaca typ ruchu.
+   *
    * @param piece ruszany pionek
-   * @param newX nowa wspolrzedna x ruszanego pionka
-   * @param newY nowa wspolrzedna y ruszanego pionka
+   * @param newX  nowa wspolrzedna x ruszanego pionka
+   * @param newY  nowa wspolrzedna y ruszanego pionka
    * @return typ ruchu (NONE, NORMAL, KILL)
    */
   protected MoveResult tryMove(Piece piece, int newX, int newY) {
@@ -290,8 +298,9 @@ abstract class Board {
 
   /**
    * Metoda zwracajaca czy dama moze sie ruszyc.
-   * @param x stara wspolrzedna x damy
-   * @param y stara wspolrzedna y damy
+   *
+   * @param x    stara wspolrzedna x damy
+   * @param y    stara wspolrzedna y damy
    * @param newX nowa wspolrzedna x damy
    * @param newY nowa wspolrzedna y damy
    * @return true or false
@@ -303,10 +312,11 @@ abstract class Board {
 
   /**
    * Metoda zwracajaca czy dama moze bic.
-   * @param x stara wspolrzedna x damy
-   * @param y stara wspolrzedna y damy
-   * @param newX nowa wspolrzedna x damy
-   * @param newY nowa wspolrzedna y damy
+   *
+   * @param x     stara wspolrzedna x damy
+   * @param y     stara wspolrzedna y damy
+   * @param newX  nowa wspolrzedna x damy
+   * @param newY  nowa wspolrzedna y damy
    * @param board plansza
    * @return true or false
    */
@@ -324,6 +334,7 @@ abstract class Board {
 
   /**
    * Metoda sprawdza czy ktoras ze wspolrzednych jest taka sama.
+   *
    * @param x0 pierwsza wspolrzedna x
    * @param y0 pierwsza wspolrzedna y
    * @param x1 druga wspolrzedna x
@@ -333,8 +344,10 @@ abstract class Board {
   protected Boolean isInPlus(int x0, int y0, int x1, int y1) {
     return x0 == x1 || y0 == y1;
   }
+
   /**
    * Metoda sprawdza czy suma poszczegolnych wspolrzednych jest taka sama.
+   *
    * @param x0 pierwsza wspolrzedna x
    * @param y0 pierwsza wspolrzedna y
    * @param x1 druga wspolrzedna x
@@ -350,10 +363,11 @@ abstract class Board {
 
   /**
    * Metoda szukajca wspolrzednych pionka.
-   * @param x0 pierwsza wspolrzedna x
-   * @param y0 pierwsza wspolrzedna y
-   * @param x1 druga wspolrzedna x
-   * @param y1 druga wspolrzedna y
+   *
+   * @param x0    pierwsza wspolrzedna x
+   * @param y0    pierwsza wspolrzedna y
+   * @param x1    druga wspolrzedna x
+   * @param y1    druga wspolrzedna y
    * @param board plansza
    * @return wspolrzedne
    */
@@ -383,10 +397,11 @@ abstract class Board {
 
   /**
    * Metoda liczy pionki w skosie.
-   * @param x0 pierwsza wspolrzedna x
-   * @param y0 pierwsza wspolrzedna y
-   * @param x1 druga wspolrzedna x
-   * @param y1 druga wspolrzedna y
+   *
+   * @param x0    pierwsza wspolrzedna x
+   * @param y0    pierwsza wspolrzedna y
+   * @param x1    druga wspolrzedna x
+   * @param y1    druga wspolrzedna y
    * @param board plansza
    * @return ilosc pionkow w skosie
    */
@@ -415,6 +430,7 @@ abstract class Board {
 
   /**
    * Metoda sprawdzajaca czy bicie jest wymuszone.
+   *
    * @param player gracz
    * @return true or false
    */
@@ -433,10 +449,11 @@ abstract class Board {
 
   /**
    * Metoda sprawdza czy pionek moze bic.
-   * @param x wspolrzedna x pionka
-   * @param y wspolrzedna y pionka
-   * @param piece pionek
-   * @param board plansza
+   *
+   * @param x              wspolrzedna x pionka
+   * @param y              wspolrzedna y pionka
+   * @param piece          pionek
+   * @param board          plansza
    * @param lastQDirection ostatni kierunek chodzenia damy
    * @return true or false
    */
@@ -482,9 +499,10 @@ abstract class Board {
 
   /**
    * Pobiera ilosc najdluzszego bicia pionka.
-   * @param x wspolrzedna x pionka
-   * @param y wspolrzedna y pionka
-   * @param board plansza
+   *
+   * @param x              wspolrzedna x pionka
+   * @param y              wspolrzedna y pionka
+   * @param board          plansza
    * @param lastQDirection ostatni kierunek chodzenia damy
    * @return ilosc najdluzszego bicia pionka
    */
@@ -582,6 +600,7 @@ abstract class Board {
 
   /**
    * Metoda zwracajaca ilosc bic najdluzeszego ruchu.
+   *
    * @return ilosc bic najdluzeszego ruchu
    */
   protected int getLongestPossibleKill() {
@@ -600,6 +619,7 @@ abstract class Board {
 
   /**
    * Meotda sprawdzajaca czy to najdluzsze mozliwe biecie
+   *
    * @param x0 pierwsza wspolrzedna x
    * @param y0 pierwsza wspolrzedna y
    * @param x1 druga wspolrzedna x
@@ -618,6 +638,7 @@ abstract class Board {
 
   /**
    * Metoda klonuje plansze.
+   *
    * @param board plansza
    * @return kopia planszy
    */
@@ -642,8 +663,9 @@ abstract class Board {
 
   /**
    * Metoda pobierajaca kierunek poruszania sie damy.
-   * @param x pierwsza wspolrzedna x
-   * @param y pierwsza wspolrzedna y
+   *
+   * @param x  pierwsza wspolrzedna x
+   * @param y  pierwsza wspolrzedna y
    * @param x1 druga wspolrzedna x
    * @param y1 druga wspolrzedna y
    * @return kierunek poruszanie sie damy
@@ -709,6 +731,7 @@ abstract class Board {
 
   /**
    * Metoda sprawdzajaca czy gracz moze sie ruszyc.
+   *
    * @param Player gracz
    * @return true or false
    */
@@ -722,39 +745,28 @@ abstract class Board {
 
         if (board[x][y].hasPiece() && board[x][y].getPiece().getType() == p) {
           Piece piece = board[x][y].getPiece();
-            int i = 0;
-            if (tryMove(piece, x + 1, y + 1).type == MoveType.NONE) {
-              i++;
+          int[][] directions = {{-1, 1}, {-1, -1}, {1, 1}, {1, -1}};
+          int xClone = x;
+          int yClone = y;
+          for (int[] direction : directions) {
+            while (x >= 0 && y < HEIGHT && x < WIDTH && y >= 0) {
+              if (tryMove(piece, x, y).type != MoveType.NONE) {
+                return true;
+              }
+              x += direction[0];
+              y += direction[1];
             }
-            if (tryMove(piece, x + 1, y - 1).type == MoveType.NONE) {
-              i++;
-            }
-            if (tryMove(piece, x - 1, y + 1).type == MoveType.NONE) {
-              i++;
-            }
-            if (tryMove(piece, x - 1, y - 1).type == MoveType.NONE) {
-              i++;
-            }
-            if (tryMove(piece, x - 2, y - 2).type == MoveType.NONE) {
-              i++;
-            }
-            if (tryMove(piece, x - 2, y + 2).type == MoveType.NONE) {
-              i++;
-            }
-            if (tryMove(piece, x + 2, y + 2).type == MoveType.NONE) {
-              i++;
-            }
-            if (tryMove(piece, x + 2, y - 2).type == MoveType.NONE) {
-              i++;
-            }
-            if (i != 8) {
-              return true;
-            }
+            x = xClone;
+            y = yClone;
+          }
+
 
         }
       }
     }
+
     return false;
   }
+
 
 }
